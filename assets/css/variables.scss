@@ -1,0 +1,23 @@
+/*
+** CSS variables
+*/
+
+:root {
+    /* FONTS */
+    --font-content-family: "Qanelas";
+    --font-content-size: 18px;
+    --font-content-size-big: 20px;
+    --font-content-size-medium: 16px;
+    --font-content-size-small: 14px;
+    --font-content-size-smaller: 12px;
+    --font-title-size: 45px;
+    --font-title-size-small: 28px;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semi-bold: 600;
+    --font-weight-bold: 700;
+
+
+    /* COLORS */
+    --primary-color: rgb(29, 78, 216);
+}

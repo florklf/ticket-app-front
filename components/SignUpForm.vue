@@ -56,24 +56,19 @@
 </template>
 
 <script setup lang="ts">
-import { useToast } from 'primevue/usetoast'
 import { PATH as constantPath } from '@/constants/pages'
 
 const loading = ref(false)
 const [email, password, confirm] = [ref(''), ref(''), ref('')]
 const signinError = ref()
-const toast = useToast()
 
 const onSubmit = async (values: any) => {
   loading.value = true
   const { confirm: _, ...payload } = values
-  const { error } = await useFetch('/users', { method: 'POST', body: payload })
+  const { error } = await useCustomFetch('/users', { method: 'POST', body: payload })
   if (!error.value) {
-    const message = useMessage()
-    message.value = { type: 'success', text: 'Votre compte a été créé avec succès.' }
     return navigateTo({ path: constantPath.SIGNIN_PAGE })
   }
   loading.value = false
-  toast.add({ severity: 'error', summary: 'Erreur', detail: 'Une erreur est survenue lors de la création de votre compte.' })
 }
 </script>

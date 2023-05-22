@@ -23,7 +23,6 @@
     "vue-tsc": "^1.0.24"
   },
   "dependencies": {
-    "@prisma/client": "^4.11.0",
     "@vee-validate/nuxt": "^4.9.4",
     "@vee-validate/rules": "^4.9.4",
     "@vee-validate/zod": "^4.9.4",

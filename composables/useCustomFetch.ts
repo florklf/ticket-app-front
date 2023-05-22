@@ -3,6 +3,7 @@ import { defu } from 'defu'
 
 export function useCustomFetch<T> (url: string, options: UseFetchOptions<T> = {}) {
   const { status, token } = useAuth()
+  const config = useRuntimeConfig()
 
   console.info(status.value, token.value)
   const defaults: UseFetchOptions<T> = {
@@ -24,5 +25,5 @@ export function useCustomFetch<T> (url: string, options: UseFetchOptions<T> = {}
 
   const params = defu(options, defaults)
 
-  return useFetch(url, params)
+  return useFetch(`${config.public.apiBase}${url}`, params)
 }

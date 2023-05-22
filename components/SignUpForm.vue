@@ -65,9 +65,8 @@ const signinError = ref()
 const toast = useToast()
 
 const onSubmit = async (values: any) => {
-  console.info('onSubmit', values)
   loading.value = true
-  const { confirm, ...payload } = values
+  const { confirm: _, ...payload } = values
   const { error } = await useFetch('/users', { method: 'POST', body: payload })
   if (!error.value) {
     const message = useMessage()

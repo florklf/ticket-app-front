@@ -1,9 +1,10 @@
 <template>
   <div class="flex flex-col min-h-screen">
-    <Navbar />
-    <main class="container mx-auto flex-grow">
-      <slot />
-    </main>
-    <DefaultFooter class="mt-auto" />
+    <DefaultNavbar>
+      <main class="container mx-auto flex-grow">
+        <slot />
+      </main>
+      <DefaultFooter class="mt-auto" />
+    </defaultnavbar>
   </div>
 </template>

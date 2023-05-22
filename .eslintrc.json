@@ -49,6 +49,9 @@
             "CONTENT",
             "OTHER_ATTR"
           ]
+        }],
+        "@typescript-eslint/no-unused-vars": ["error", {
+          "varsIgnorePattern": "^_"
         }]
       }
     }

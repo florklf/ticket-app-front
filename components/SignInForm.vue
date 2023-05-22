@@ -1,89 +1,79 @@
 <template>
-    <n-form ref="formRef" :model="formCredentials" :rules="rules" @submit.prevent="handleValidateClick">
-        <n-form-item label="Nom d'utilisateur" path="username">
-            <n-input v-model:value="formCredentials.username" placeholder="Nom d'utilisateur" />
-        </n-form-item>
-        <n-form-item label="Mot de passe" path="password">
-            <n-input type="password" show-password-on="mousedown" v-model:value="formCredentials.password"  placeholder="Mot de passe" />
-        </n-form-item>
-        <n-button attr-type="submit" class="my-1">
-            Je me connecte
-        </n-button>
-    </n-form>
+  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-1/2 m-auto">
+    <div class="text-center mb-8">
+      <div class="text-900 text-3xl font-medium mb-3">
+        Welcome Back
+      </div>
+      <span class="text-600 font-medium line-height-3">Vous n'avez pas de compte ?</span>
+      <NuxtLink :to="constantPath.SIGNUP_PAGE" class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">
+        Inscrivez-vous
+      </NuxtLink>
+    </div>
+
+    <div class="m-10">
+      <Message v-if="errorMessage" class="p-message-error mb-10" :closable="false">
+        {{ errorMessage }}
+      </Message>
+    </div>
+    <form @submit="onSubmit" class="flex flex-col gap-8 items-center">
+      <div class="m-auto space-x-6">
+        <span class="p-float-label">
+          <InputText id="email" v-model="email" type="text" class="p-inputtext-lg" :class="{ 'p-invalid': errors.email }" />
+          <label for="email">Email</label>
+        </span>
+        <small v-if="errors.email" class="p-error !m-0">{{ errors.email }}</small>
+      </div>
+
+      <div class="m-auto space-x-6">
+        <span class="p-float-label">
+          <Password
+            id="password" v-model="password" class="p-inputtext-lg" :class="{ 'p-invalid': errors.password }" :feedback="false"
+            toggle-mask
+          />
+          <label for="password">Password</label>
+        </span>
+        <small v-if="errors.password" id="text-error" class="p-error !m-0">{{ errors.password }}</small>
+      </div>
+      <a class="font-medium no-underline ml-2 text-blue-500 text-center cursor-pointer">Forgot password?</a>
+      <Button type="submit" label="Sign In" icon="pi pi-user" class="w-full lg:w-1/2 lg:m-auto block" :loading="loading" />
+    </form>
+  </div>
 </template>
 
 <script setup lang="ts">
-import {
-    FormInst,
-    FormItemRule,
-    FormValidationError,
-    useMessage
-} from 'naive-ui';
-
-const { signIn } = useAuth();
-const { query } = useRoute();
-const config = useRuntimeConfig();
-const message = useMessage();
-
-const formRef = ref<FormInst | null>(null)
-const formCredentials = reactive({
-    username: '',
-    password: '',
-    redirect: false
-})
-const rules = ref({
-    username: {
-        required: true,
-        trigger: 'blur',
-        validator: (rule: FormItemRule, value: string) => {
-            return new Promise<void>((resolve, reject) => {
-                if (value === '') {
-                    reject(Error('Le nom d\'utilisateur est requis'))
-                } else {
-                    resolve()
-                }
-            })
-        }
-    },
-    password: {
-        required: true,
-        trigger: 'blur',
-        validator: (rule: FormItemRule, value: string) => {
-            return new Promise<void>((resolve, reject) => {
-                if (value === '') {
-                    reject(Error('Le mot de passe est requis'))
-                } else {
-                    resolve()
-                }
-            })
-        }
-    }
+import * as zod from 'zod'
+import { PATH as constantPath } from '@/constants/pages'
+definePageMeta({
+  auth: {
+    unauthenticatedOnly: true,
+    navigateAuthenticatedTo: '/'
+  }
 })
 
-const handleValidateClick = () => {
-    const messageReactive = message.loading('Vérification des informations...', {
-        duration: 0,
-    })
-    formRef.value?.validate(
-        (errors: Array<FormValidationError> | undefined) => {
-            if (!errors) {
-                mySignInHandler()
-            } else {
-                message.error("Veuillez vérifier les informations saisies.")
-            }
-            messageReactive.destroy()
-        }
-    );
-}
+const { signIn } = useAuth()
+const loading = ref(false)
 
-const mySignInHandler = async () => {
-    const { error }: any = await signIn('credentials', formCredentials)
-    if (error) {
-        message.error('Une erreur est survenue lors de la connexion. Veuillez vérifier les informations saisies.')
-    } else {
-        const callbackUrl = (query.callbackUrl ?? config.baseURL) as string;
-        // No error, continue with the sign in, e.g., by following the returned redirect:
-        return navigateTo(callbackUrl, { external: true });
-    }
-}
+const validationSchema = toTypedSchema(
+  zod.object({
+    email: zod.string().email({ message: 'Must be a valid email' }),
+    password: zod.string().min(8, { message: '8 chars minimum' })
+  })
+)
+const { handleSubmit, errors } = useForm({
+  validationSchema
+})
+const { value: email } = useField<string>('email')
+const { value: password } = useField<string>('password')
+const errorMessage = ref()
+
+const onSubmit = handleSubmit(async (values) => {
+  loading.value = true
+  try {
+    await signIn(values, { redirect: false })
+    return navigateTo('/')
+  } catch (error) {
+    errorMessage.value = 'Une erreur est survenue lors de la connexion. Veuillez vérifier les informations saisies.'
+  }
+  loading.value = false
+})
 </script>

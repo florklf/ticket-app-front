@@ -1,6 +1,6 @@
 <template>
-  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-1/2 m-auto">
-    <div class="text-center mb-8">
+  <div class="surface-card p-4 border-round w-full lg:w-1/2 m-auto">
+    <div class="text-center mb-4">
       <div class="text-900 text-3xl font-medium mb-3">
         Inscription
       </div>
@@ -10,12 +10,12 @@
       </NuxtLink>
     </div>
 
-    <div class="m-10">
-      <Message v-if="signinError" class="p-message-error mb-10" :closable="false">
+    <div class="m-6">
+      <Message v-if="signinError" class="p-message-error mb-6" :closable="false">
         {{ signinError }}
       </Message>
     </div>
-    <Form @submit="onSubmit" class="flex flex-col gap-8 items-center">
+    <Form @submit="onSubmit" class="flex flex-col gap-6 items-center">
       <Field v-slot="{ field, errorMessage }" name="email" class="m-auto" rules="email" as="div">
         <span class="p-float-label">
           <InputText
@@ -68,6 +68,11 @@ const onSubmit = async (values: any) => {
   const { error } = await useCustomFetch('/users', { method: 'POST', body: payload })
   if (!error.value) {
     return navigateTo({ path: constantPath.SIGNIN_PAGE })
+  }
+  if (error.value.statusCode === 409) {
+    signinError.value = 'Un compte existe déjà avec cet email'
+  } else {
+    signinError.value = 'Une erreur est survenue'
   }
   loading.value = false
 }

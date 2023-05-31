@@ -1,6 +1,6 @@
 <template>
-  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-1/2 m-auto">
-    <div class="text-center mb-8">
+  <div class="surface-card p-4 border-round w-full lg:w-1/2 m-auto">
+    <div class="text-center mb-6">
       <div class="text-900 text-3xl font-medium mb-3">
         Welcome Back
       </div>
@@ -10,12 +10,12 @@
       </NuxtLink>
     </div>
 
-    <div class="m-10">
-      <Message v-if="errorMessage" class="p-message-error mb-10" :closable="false">
+    <div class="m-6">
+      <Message v-if="errorMessage" class="p-message-error mb-6" :closable="false">
         {{ errorMessage }}
       </Message>
     </div>
-    <form @submit="onSubmit" class="flex flex-col gap-8 items-center">
+    <form @submit="onSubmit" class="flex flex-col gap-6 items-center">
       <div class="m-auto space-x-6">
         <span class="p-float-label">
           <InputText id="email" v-model="email" type="text" class="p-inputtext-lg" :class="{ 'p-invalid': errors.email }" />

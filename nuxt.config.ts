@@ -1,4 +1,3 @@
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: [
@@ -9,8 +8,20 @@ export default defineNuxtConfig({
       {
         autoImport: true
       }
-    ]
+    ],
+    'dayjs-nuxt',
+    'nuxt-icon',
+    '@nuxtjs/snipcart',
+    '@pinia/nuxt',
+    '@sidebase/nuxt-session',
+    'nuxt-lodash',
+    '@sfxcode/nuxt-primevue'
   ],
+
+  app: {
+    pageTransition: { name: 'page', mode: 'out-in' }
+  },
+
   auth: {
     baseURL: 'http://localhost:3000/',
     provider: {
@@ -30,24 +41,52 @@ export default defineNuxtConfig({
       }
     }
   },
+
   typescript: {
     shim: false
   },
+
   css: [
     '~/assets/css/main.scss',
-    'primevue/resources/themes/lara-light-blue/theme.css',
-    'primevue/resources/primevue.css'
+    'primevue/resources/primevue.css',
+    'primevue/resources/themes/soho-light/theme.css'
   ],
+
   build: {
     transpile: ['primevue']
   },
+
   devServer: {
     port: 3002,
     url: process.env.BASE_URL
   },
+
   runtimeConfig: {
     public: {
-      apiBase: ''
+      apiBase: '',
+      localExposedApiUrl: ''
     }
+  },
+
+  dayjs: {
+    locales: ['fr'],
+    defaultLocale: 'fr',
+    plugins: ['relativeTime', 'utc', 'timezone'],
+    defaultTimezone: 'Europe/Paris'
+  },
+
+  snipcart: {
+    publicApiKey: process.env.SNIPCART_API_KEY,
+    templatesUrl: '/snipcart-custom.html',
+    currency: 'EUR',
+    language: 'fr',
+    version: '3.6.0'
+  },
+
+  devtools: {
+    enabled: true
+  },
+  tailwindcss: {
+    exposeConfig: true
   }
 })

@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html>
+    <head><title>Templates</title></head>
+
+    <body>
+        <div id="snipcart-templates">
+            <!-- Insert template overrides here -->
+            <item-line>
+                <li :class="{'snipcart-item-line': true, 'snipcart-item-line--cart-edit': editingCart}">
+                    <flash-message
+                        type="info"
+                        icon="box"
+                        v-if="stockLimitReached"
+                        :title="$localize('errors.quantity_revised')"
+                    ></flash-message>
+                    <flash-message
+                        type="error"
+                        icon="box"
+                        v-if="outOfStock"
+                        :title="$localize('errors.quantity_out_of_stock')"
+                    ></flash-message>
+                    <div class="snipcart-item-line__container">
+                        <figure
+                            class="snipcart-item-line__media"
+                            v-if="showLargeImage"
+                        >
+                            <item-image class="snipcart-item-line__image"></item-image>
+                        </figure>
+                        <div class="snipcart-item-line__product">
+                            <div class="snipcart-item-line__header">
+                                <figure
+                                    class="snipcart-item-line__media snipcart-item-line__media--small"
+                                    v-if="showSmallImage"
+                                >
+                                    <item-image class="snipcart-item-line__image"></item-image>
+                                </figure>
+                
+                                <div class="flex">
+                                    <div class="p-chip">
+                                        <span class="p-chip-text">
+                                            {{ item.customFields.find(field => field.name === 'event_type').displayValue }}
+                                        </span>
+                                    </div>
+                                </div>
+                
+                                <button-icon
+                                    icon="trash"
+                                    label="item.remove_item"
+                                    styling="danger"
+                                    @click="removeItem"
+                                ></button-icon>
+                            </div>
+                
+                            <div class="snipcart-item-line__content">
+                                <div class="snipcart-item-line__body">
+                                    <h2 class="font-bold text-xl">
+                                        {{ item.customFields.find(field => field.name === 'event_name').displayValue }}
+                                    </h2>
+                                    <h2 class="font-bold">
+                                        {{ item.customFields.find(field => field.name === 'event_place').displayValue }} — {{ item.name }}
+                                    </h2>
+                                    <div class="snipcart-item-line__info">
+                                        <item-description v-if="showDescription"></item-description>
+                                    </div>
+                                    <div class="snipcart-item-line__variants flex justify-end items-end">
+                                        <div class="font-normal">
+                                            {{ item.customFields.find(field => field.name === 'event_date').displayValue }}
+                                        </div>
+                                        <div>
+                                            <item-plans
+                                                :item="item"
+                                                v-if="!adding && isSubscribable"
+                                            ></item-plans>
+                                            <item-custom-fields v-if="!adding"></item-custom-fields>
+                                        </div>
+                                        <item-quantity
+                                            class="snipcart-item-line__quantity"
+                                            v-if="!adding && !isSubscribable"
+                                            :disabled="outOfStock || isSubscribable"
+                                        ></item-quantity>
+                                        <div
+                                            class="snipcart-form__field snipcart-form__field--plan snipcart-form__field--plan--billed-on"
+                                            v-if="isSubscribable && !adding"
+                                        >
+                                            <span class="snipcart-form__label snipcart__font--tiny">
+                                                {{$localize('subscription.payment_amount')}}
+                                            </span>
+                                            <div class="snipcart-form__field--plan__readonly">
+                                                <item-price
+                                                    :item="item"
+                                                    :selected-plan="selectedPlan"
+                                                >
+                                                </item-price>
+                                            </div>
+                                        </div>
+                
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+          </item-line>
+
+        </div>
+    </body>
+</html>
+
+<style></style>

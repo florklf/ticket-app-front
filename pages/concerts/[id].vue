@@ -1,0 +1,152 @@
+<template>
+  <div>
+    <Breadcrumb :home="{to: '/', 'label': 'Home'}" :model="items" class="mb-4" />
+    <div>
+      <div class="relative mb-32">
+        <img :src="concert?.image" :alt="concert?.name" class="w-full object-cover h-60">
+        <div class="text-3xl font-bold tracking-tight bg-primary text-textonprimary sm:text-4xl inline-block py-10 px-20 absolute bottom-[-3em]">
+          <h1>{{ concert?.name }}</h1>
+          <span class="text-xl font-normal block mb-8">{{ concert?.type }} - {{ concert?.artist?.name }}</span>
+          <div class="flex font-light text-lg gap-x-12">
+            <div class="flex items-center gap-2">
+              <Icon name="ic:sharp-place" />
+              <div class="flex flex-col leading-none">
+                <span>{{ concert?.place.name }}</span>
+                <small>{{ concert?.place?.city }}</small>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <Icon name="material-symbols:date-range" />
+              <div>{{ dayjs(concert?.date).format('DD/MM/YYYY à HH[h]mm') }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mx-auto max-w-2xl px-2 lg:grid lg:max-w-full lg:grid-cols-2 lg:gap-x-12">
+        <!-- concert details -->
+        <section class="mt-4">
+          <Accordion :active-index="0">
+            <AccordionTab header="Description de l'évènement">
+              <p class="text-base text-gray-500">
+                {{ concert?.description }}
+              </p>
+            </AccordionTab>
+            <AccordionTab header="Emplacement">
+              <iframe
+                class="w-full h-64"
+                style="border:0"
+                loading="lazy"
+                allowfullscreen
+                referrerpolicy="no-referrer-when-downgrade"
+                :src="`https://www.google.com/maps/embed/v1/place?key=${config.public.googleApiKey}&q=Space+Needle,Seattle+WA`"
+              />
+              <p class="text-xl font-bold mt-6">
+                {{ concert?.place?.name }}
+              </p>
+              <div class="flex flex-col">
+                <span>{{ concert?.place?.address }}</span>
+                <span>{{ concert?.place?.city }} {{ concert?.place?.zip }}</span>
+              </div>
+              <p class="mt-6">
+                {{ concert?.place?.description }}
+              </p>
+            </AccordionTab>
+          </Accordion>
+        </section>
+
+        <!-- concert form -->
+        <section class="space-y-4">
+          <span class="text-text text-2xl">Sélectionnez vos places :</span>
+          <form>
+            <div class="sm:flex sm:flex-col sm:justify-between gap-4">
+              <!-- Seat selector -->
+              <div v-for="eventSeatType in concert?.EventSeatType" :key="eventSeatType.id" class="flex items-center bg-bghighlight text-texthighlight p-4 rounded">
+                <label for="seat-type" class="grow text-xl font-medium">{{ eventSeatType.seatType.name }}</label>
+                <span class="text-xl font-bold mr-4">{{ eventSeatType.price }} €</span>
+                <InputNumber
+                  v-model="(seatsSelection as any)[eventSeatType.id]" class="" input-id="horizontal-buttons" show-buttons
+                  button-layout="horizontal" :step="1" :min="0" :max="eventSeatType.available_seats"
+                >
+                  <template #decrementbuttonicon>
+                    <Icon name="ic:baseline-minus" />
+                  </template>
+                  <template #incrementbuttonicon>
+                    <Icon name="material-symbols:add" />
+                  </template>
+                </InputNumber>
+              </div>
+            </div>
+            <div class="mt-4">
+              <a href="#" class="group inline-flex text-sm text-gray-500 hover:text-gray-700">
+                <span @click="showCategoryPopup = true">Quelle catégorie devrais-je choisir?</span>
+                <Dialog v-model:visible="showCategoryPopup" modal header="Catégories de places disponibles" class="sm:w-3/4 md:w-1/2">
+                  <Fieldset v-for="eventSeatType in concert?.EventSeatType" :key="eventSeatType.id" class="mb-8" :legend="eventSeatType.seatType.name">
+                    <p>Prix: {{ eventSeatType.price }} €</p>
+                    <p>Capacité: {{ eventSeatType.seatType.capacity }}</p>
+                    <p class="mt-2">{{ eventSeatType.seatType.description }}</p>
+                  </Fieldset>
+                </Dialog>
+              </a>
+            </div>
+            <div class="mt-2 flex justify-end">
+              <Button
+                @click="addToCart"
+                variant="secondary"
+                size="large"
+                label="Ajouter au panier"
+                class="space-x-4"
+                :disabled="Object.values(seatsSelection).reduce((acc: any, curr) => acc + curr, 0) === 0"
+              >
+                <template #icon>
+                  <Icon name="material-symbols:add-shopping-cart" />
+                </template>
+              </Button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { Concert } from '~/types/Events/Concert'
+
+const route = useRoute()
+const dayjs = useDayjs()
+const seatsSelection = reactive({})
+const config = useRuntimeConfig()
+const { data: concert } = await useCustomFetch<Concert>(`/events/${route.params.id}`)
+
+const items = ref([
+  { label: 'Concerts', to: '/concerts' },
+  { label: concert.value?.name }
+])
+const showCategoryPopup = ref(false)
+
+const addToCart = async () => {
+  try {
+    for (const [id, quantity] of Object.entries(seatsSelection)) {
+      if (quantity === 0) { continue }
+      await window.Snipcart.api.cart.items.add({
+        id,
+        name: concert.value?.EventSeatType.find(type => type.id === +id)?.seatType.name,
+        price: concert.value?.EventSeatType.find(type => type.id === +id)?.price,
+        quantity,
+        url: `${config.public.localExposedApiUrl}/events/seat-types/${id}`,
+        customFields: [
+          { name: 'event_name', value: concert.value?.name, type: 'string' },
+          { name: 'event_type', value: concert.value?.type, type: 'string' },
+          { name: 'event_date', value: dayjs(concert.value?.date).format('DD/MM/YYYY - hh[h]mm'), type: 'string' },
+          { name: 'event_place', value: concert.value?.place.name, type: 'string' }
+        ]
+      })
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+</script>
+
+<style scoped>
+</style>

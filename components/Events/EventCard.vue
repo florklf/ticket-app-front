@@ -1,7 +1,7 @@
 <template>
   <NuxtLink :to="`/${pluralize(event.type.toLowerCase())}/${event.id}`">
-    <div class="bg-gray-200 group-hover:opacity-75 sm:h-64 relative">
-      <Chip :label="event.type" class="absolute top-2 right-2 z-10 font-bold text-red-500" />
+    <div class="bg-gray-200 group-hover:opacity-90 sm:h-64 relative">
+      <Chip :label="event.type" class="absolute top-2 right-2 z-10 font-bold text-primary" />
       <img :src="event.image" class="h-full w-full object-cover object-center sm:h-full sm:w-full">
     </div>
     <div class="flex flex-1 flex-col space-y-2 p-4">

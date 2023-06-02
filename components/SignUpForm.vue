@@ -2,9 +2,9 @@
   <div class="surface-card p-4 border-round w-full lg:w-1/2 m-auto">
     <div class="text-center mb-4">
       <div class="text-900 text-3xl font-medium mb-3">
-        Inscription
+        Rejoignez-nous
       </div>
-      <span class="text-600 font-medium line-height-3">Vous avez déjà un compte ?</span>
+      <span class="text-600 font-medium line-height-3">Vous êtes déjà membre ?</span>
       <NuxtLink :to="constantPath.SIGNIN_PAGE" class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">
         Connectez-vous
       </NuxtLink>
@@ -16,41 +16,38 @@
       </Message>
     </div>
     <Form @submit="onSubmit" class="flex flex-col gap-6 items-center">
-      <Field v-slot="{ field, errorMessage }" name="email" class="m-auto" rules="email" as="div">
+      <Field v-slot="{ field, errorMessage }" name="email" class="m-auto w-80" rules="email" as="div">
         <span class="p-float-label">
-          <InputText
-            id="email" v-bind="field" v-model="email" type="text" class="p-inputtext-lg"
-            :class="{ 'p-invalid': errorMessage }"
-          />
+          <InputText id="email" v-bind="field" v-model="email" type="text" :class="{ 'p-invalid': errorMessage }"
+            class="w-full" />
           <label for="email">Email</label>
         </span>
         <small v-if="errorMessage" class="p-error !m-0">{{ errorMessage }}</small>
       </Field>
 
-      <Field v-slot="{ field, errorMessage }" name="password" class="m-auto" rules="required|minLength:8" as="div">
+      <Field v-slot="{ field, errorMessage }" name="password" class="m-auto w-80" rules="required|minLength:8" as="div">
         <span class="p-float-label">
-          <Password
-            id="password" v-bind="field" v-model="password" type="text" class="p-inputtext-lg"
-            :class="{ 'p-invalid': errorMessage }" toggle-mask
-          />
-          <label for="password">Password</label>
+          <Password id="password" v-bind="field" v-model="password" type="text" :class="{ 'p-invalid': errorMessage }"
+            inputClass="w-full" class="w-full" toggle-mask />
+          <label for="password">Mot de passe</label>
         </span>
         <small v-if="errorMessage" class="p-error !m-0">{{ errorMessage }}</small>
       </Field>
 
-      <Field v-slot="{ field, errorMessage }" name="confirm" class="m-auto space-x-6" rules="confirmed:@password" as="div">
+      <Field v-slot="{ field, errorMessage }" name="confirm" class="m-auto space-x-6 w-80" rules="confirmed:@password"
+        as="div">
         <span class="p-float-label">
-          <Password
-            id="confirm" v-bind="field" v-model="confirm" type="text" class="p-inputtext-lg"
-            :class="{ 'p-invalid': errorMessage }" toggle-mask
-          />
-          <label for="confirm">Confirm password</label>
+          <Password id="confirm" v-bind="field" v-model="confirm" type="text" :class="{ 'p-invalid': errorMessage }"
+            inputClass="w-full" class="w-full" toggle-mask />
+          <label for="confirm">Confirmer le mot de passe</label>
         </span>
         <small v-if="errorMessage" class="p-error !m-0">{{ errorMessage }}</small>
       </Field>
 
-      <a class="font-medium no-underline ml-2 text-blue-500 text-center cursor-pointer">Forgot password?</a>
-      <Button type="submit" label="Sign In" icon="pi pi-user" class="w-full lg:w-1/2 lg:m-auto block" :loading="loading" />
+      <div class="flex flex-col m-auto w-full gap-2">
+        <Button type="submit" label="Rejoindre" icon="pi pi-user" class="self-center w-full lg:w-1/2 lg:m-auto block"
+          :loading="loading" />
+      </div>
     </Form>
   </div>
 </template>
@@ -70,7 +67,7 @@ const onSubmit = async (values: any) => {
     return navigateTo({ path: constantPath.SIGNIN_PAGE })
   }
   if (error.value.statusCode === 409) {
-    signinError.value = 'Un compte existe déjà avec cet email'
+    signinError.value = 'Cet email est déjà utilisé'
   } else {
     signinError.value = 'Une erreur est survenue'
   }

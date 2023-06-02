@@ -18,12 +18,16 @@ export default defineNuxtConfig({
     '@sfxcode/nuxt-primevue'
   ],
 
+  plugins: [
+    '~/plugins/fontawesome.js',
+  ],
+
   app: {
     pageTransition: { name: 'page', mode: 'out-in' }
   },
 
   auth: {
-    baseURL: process.env.NUXT_PUBLIC_API_BASE,
+    baseURL: process.env.NUXT_PUBLIC_API_BASE + '/',
     provider: {
       type: 'local',
       endpoints: {
@@ -49,7 +53,8 @@ export default defineNuxtConfig({
   css: [
     '~/assets/css/main.scss',
     'primevue/resources/primevue.css',
-    'primevue/resources/themes/soho-light/theme.css'
+    'primevue/resources/themes/soho-light/theme.css',
+    '@fortawesome/fontawesome-svg-core/styles.css',
   ],
 
   build: {
@@ -64,7 +69,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase: '',
-      localExposedApiUrl: ''
+      localExposedApiUrl: '',
+      googleApiKey: '',
     }
   },
 

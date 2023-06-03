@@ -15,15 +15,24 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@sidebase/nuxt-session',
     'nuxt-lodash',
-    '@sfxcode/nuxt-primevue'
+    '@sfxcode/nuxt-primevue',
+    '@nuxtjs/i18n',
   ],
+  i18n: {
+    vueI18n: './i18n.config.ts',
+  },
 
   plugins: [
     '~/plugins/fontawesome.js',
   ],
 
   app: {
-    pageTransition: { name: 'page', mode: 'out-in' }
+    pageTransition: { name: 'page', mode: 'out-in' },
+    head: {
+      link: [
+        { rel: "icon", type: "image/png", href: "/assets/favicon.png" },
+      ]
+    },
   },
 
   auth: {

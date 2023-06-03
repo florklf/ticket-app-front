@@ -5,6 +5,9 @@
   </NuxtLayout>
 </template>
 <script setup>
+useHead({
+  title: 'TicketApp',
+});
 import { defineRule } from 'vee-validate'
 import AllRules from '@vee-validate/rules'
 
@@ -21,11 +24,13 @@ defineRule('minLength', (value, [limit]) => {
   return true
 })
 </script>
+
 <style>
 .page-enter-active,
 .page-leave-active {
   transition: all 0.4s;
 }
+
 .page-enter-from,
 .page-leave-to {
   opacity: 0;

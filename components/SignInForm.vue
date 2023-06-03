@@ -2,11 +2,11 @@
   <div class="surface-card p-4 border-round w-full lg:w-1/2 m-auto">
     <div class="text-center mb-6">
       <div class="text-900 text-3xl font-medium mb-3">
-        Welcome Back
+        Welcome Back 🤘
       </div>
-      <span class="text-600 font-medium line-height-3">Vous n'avez pas de compte ?</span>
+      <span class="text-600 font-medium line-height-3">Vous n'êtes pas encore membre ?</span>
       <NuxtLink :to="constantPath.SIGNUP_PAGE" class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">
-        Inscrivez-vous
+        Rejoignez-nous
       </NuxtLink>
     </div>
 
@@ -16,26 +16,28 @@
       </Message>
     </div>
     <form @submit="onSubmit" class="flex flex-col gap-6 items-center">
-      <div class="m-auto space-x-6">
+      <div class="m-auto space-x-8 w-80">
         <span class="p-float-label">
-          <InputText id="email" v-model="email" type="text" class="p-inputtext-lg" :class="{ 'p-invalid': errors.email }" />
+          <InputText id="email" v-model="email" type="text" :class="{ 'p-invalid': errors.email }" class="w-full" />
           <label for="email">Email</label>
         </span>
         <small v-if="errors.email" class="p-error !m-0">{{ errors.email }}</small>
       </div>
 
-      <div class="m-auto space-x-6">
+      <div class="m-auto space-x-6 w-80">
         <span class="p-float-label">
           <Password
-            id="password" v-model="password" class="p-inputtext-lg" :class="{ 'p-invalid': errors.password }" :feedback="false"
+            id="password" v-model="password" :class="{ 'p-invalid': errors.password }" inputClass="w-full" class="w-full" :feedback="false"
             toggle-mask
           />
-          <label for="password">Password</label>
+          <label for="password">Mot de passe</label>
         </span>
         <small v-if="errors.password" id="text-error" class="p-error !m-0">{{ errors.password }}</small>
       </div>
-      <a class="font-medium no-underline ml-2 text-blue-500 text-center cursor-pointer">Forgot password?</a>
-      <Button type="submit" label="Sign In" icon="pi pi-user" class="w-full lg:w-1/2 lg:m-auto block" :loading="loading" />
+      <div class="flex flex-col m-auto w-full gap-2">
+        <a class="font-medium no-underline ml-2 text-blue-500 text-center cursor-pointer">Mot de passe oublié ?</a>
+        <Button type="submit" label="Je me connecte" icon="pi pi-user" class="self-center w-full md:w-1/2 md:m-auto block" :loading="loading" />
+      </div>
     </form>
   </div>
 </template>
@@ -55,8 +57,8 @@ const loading = ref(false)
 
 const validationSchema = toTypedSchema(
   zod.object({
-    email: zod.string().email({ message: 'Must be a valid email' }),
-    password: zod.string().min(8, { message: '8 chars minimum' })
+    email: zod.string().email({ message: "L'email n'est pas valide" }),
+    password: zod.string().min(8, { message: '8 caractères minimum' })
   })
 )
 const { handleSubmit, errors } = useForm({

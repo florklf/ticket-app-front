@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Breadcrumb :home="{to: '/', 'label': 'Home'}" :model="items" class="mb-4" />
+    <Breadcrumb :home="{to: '/', 'icon': 'fa-solid fa-house'}" :model="items" class="mb-4" />
     <div>
       <div class="relative mb-32">
         <img :src="concert?.image" :alt="concert?.name" class="w-full object-cover h-60">
@@ -38,7 +38,7 @@
                 loading="lazy"
                 allowfullscreen
                 referrerpolicy="no-referrer-when-downgrade"
-                :src="`https://www.google.com/maps/embed/v1/place?key=${config.public.googleApiKey}&q=Space+Needle,Seattle+WA`"
+                :src="`https://www.google.com/maps/embed/v1/place?key=${config.public.googleApiKey}&q=${concert?.place?.address} ${concert?.place?.city} ${concert?.place?.zip}`"
               />
               <p class="text-xl font-bold mt-6">
                 {{ concert?.place?.name }}
@@ -78,8 +78,8 @@
             </div>
             <div class="mt-4">
               <a href="#" class="group inline-flex text-sm text-gray-500 hover:text-gray-700">
-                <span @click="showCategoryPopup = true">Quelle catégorie devrais-je choisir?</span>
-                <Dialog v-model:visible="showCategoryPopup" modal header="Catégories de places disponibles" class="sm:w-3/4 md:w-1/2">
+                <span @click.prevent="showCategoryPopup = true">Quelle catégorie devrais-je choisir?</span>
+                <Dialog v-model:visible="showCategoryPopup" :dismissableMask="true" modal header="Catégories de places disponibles" class="sm:w-3/4 md:w-1/2">
                   <Fieldset v-for="eventSeatType in concert?.EventSeatType" :key="eventSeatType.id" class="mb-8" :legend="eventSeatType.seatType.name">
                     <p>Prix: {{ eventSeatType.price }} €</p>
                     <p>Capacité: {{ eventSeatType.seatType.capacity }}</p>
@@ -95,7 +95,7 @@
                 size="large"
                 label="Ajouter au panier"
                 class="space-x-4"
-                :disabled="Object.values(seatsSelection).reduce((acc: any, curr) => acc + curr, 0) === 0"
+                v-tooltip.top="{ value: `You must be connected to add to your cart`, disabled: status === 'authenticated', class: 'text-center' }"
               >
                 <template #icon>
                   <Icon name="material-symbols:add-shopping-cart" />
@@ -116,6 +116,7 @@ const route = useRoute()
 const dayjs = useDayjs()
 const seatsSelection = reactive({})
 const config = useRuntimeConfig()
+const { status } = useAuth()
 const { data: concert } = await useCustomFetch<Concert>(`/events/${route.params.id}`)
 
 const items = ref([
@@ -125,6 +126,10 @@ const items = ref([
 const showCategoryPopup = ref(false)
 
 const addToCart = async () => {
+  // Check if user is authenticated and if he selected at least one seat
+  if (status.value !== 'authenticated' || Object.values(seatsSelection).reduce((acc: any, curr) => acc + curr, 0) === 0) {
+    return;
+  }
   try {
     for (const [id, quantity] of Object.entries(seatsSelection)) {
       if (quantity === 0) { continue }

@@ -3,8 +3,9 @@
     <Head>
       <Title>{{ concert?.name }}</Title>
     </Head>
-    <Breadcrumb :home="{ to: '/', 'icon': 'fa-solid fa-house' }" :model="items" class="mb-4" />
-    <div>
+    <Breadcrumb :home="{ to: '/', 'icon': 'fa-solid fa-house' }" :model="items" class="mb-6"
+      :style="{ 'border-radius': 0 }" />
+    <div class="container mx-auto">
       <div class="relative mb-32">
         <img :src="concert?.image" :alt="concert?.name" class="w-full object-cover h-60">
         <div

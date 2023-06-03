@@ -1,9 +1,9 @@
-
 <template>
   <div>
     <Head>
       <Title>Accueil</Title>
     </Head>
+    <HomeHero />
     <div class="card">
       <div class="bg-white">
         <div class="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:max-w-7xl">

@@ -2,17 +2,17 @@
   <div class="surface-card p-4 border-round w-full lg:w-1/2 m-auto">
     <div class="text-center mb-6">
       <div class="text-900 text-3xl font-medium mb-3">
-        Welcome Back 🤘
+        {{ $t('signin.title') }}
       </div>
-      <span class="text-600 font-medium line-height-3">Vous n'êtes pas encore membre ?</span>
+      <span class="text-600 font-medium line-height-3">{{ $t('signin.subtitle') }}</span>
       <NuxtLink :to="constantPath.SIGNUP_PAGE" class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">
-        Rejoignez-nous
+        {{ $t('signin.signup') }}
       </NuxtLink>
     </div>
 
     <div class="m-6">
       <Message v-if="errorMessage" class="p-message-error mb-6" :closable="false">
-        {{ errorMessage }}
+        {{ $t(errorMessage) }}
       </Message>
     </div>
     <form @submit="onSubmit" class="flex flex-col gap-6 items-center">
@@ -35,8 +35,10 @@
         <small v-if="errors.password" id="text-error" class="p-error !m-0">{{ errors.password }}</small>
       </div>
       <div class="flex flex-col m-auto w-full gap-2">
-        <a class="font-medium no-underline ml-2 text-blue-500 text-center cursor-pointer">Mot de passe oublié ?</a>
-        <Button type="submit" label="Je me connecte" icon="pi pi-user" class="self-center w-full md:w-1/2 md:m-auto block" :loading="loading" />
+        <a class="font-medium no-underline ml-2 text-blue-500 text-center cursor-pointer">
+          {{ $t('signin.forgot') }}
+        </a>
+        <Button type="submit" :label="$t('signin.submit')" icon="pi pi-user" class="self-center w-full md:w-1/2 md:m-auto block" :loading="loading" />
       </div>
     </form>
   </div>
@@ -74,7 +76,7 @@ const onSubmit = handleSubmit(async (values) => {
     await signIn(values, { redirect: false })
     return navigateTo('/')
   } catch (error) {
-    errorMessage.value = 'Une erreur est survenue lors de la connexion. Veuillez vérifier les informations saisies.'
+    errorMessage.value = 'signin.error'
   }
   loading.value = false
 })

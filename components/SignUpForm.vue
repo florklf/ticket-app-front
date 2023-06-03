@@ -2,11 +2,11 @@
   <div class="surface-card p-4 border-round w-full lg:w-1/2 m-auto">
     <div class="text-center mb-4">
       <div class="text-900 text-3xl font-medium mb-3">
-        Rejoignez-nous
+        {{ $t('signup.title') }}
       </div>
-      <span class="text-600 font-medium line-height-3">Vous êtes déjà membre ?</span>
+      <span class="text-600 font-medium line-height-3">{{ $t('signup.subtitle') }}</span>
       <NuxtLink :to="constantPath.SIGNIN_PAGE" class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">
-        Connectez-vous
+        {{ $t('signup.signin') }}
       </NuxtLink>
     </div>
 
@@ -29,7 +29,7 @@
         <span class="p-float-label">
           <Password id="password" v-bind="field" v-model="password" type="text" :class="{ 'p-invalid': errorMessage }"
             inputClass="w-full" class="w-full" toggle-mask />
-          <label for="password">Mot de passe</label>
+          <label for="password">{{ $t('signup.password') }}</label>
         </span>
         <small v-if="errorMessage" class="p-error !m-0">{{ errorMessage }}</small>
       </Field>
@@ -39,13 +39,13 @@
         <span class="p-float-label">
           <Password id="confirm" v-bind="field" v-model="confirm" type="text" :class="{ 'p-invalid': errorMessage }"
             inputClass="w-full" class="w-full" toggle-mask />
-          <label for="confirm">Confirmer le mot de passe</label>
+          <label for="confirm">{{ $t('signup.passwordConfirm') }}</label>
         </span>
         <small v-if="errorMessage" class="p-error !m-0">{{ errorMessage }}</small>
       </Field>
 
       <div class="flex flex-col m-auto w-full gap-2">
-        <Button type="submit" label="Rejoindre" icon="pi pi-user" class="self-center w-full lg:w-1/2 lg:m-auto block"
+        <Button type="submit" :label="$t('signup.submit')" icon="pi pi-user" class="self-center w-full lg:w-1/2 lg:m-auto block"
           :loading="loading" />
       </div>
     </Form>
@@ -67,9 +67,9 @@ const onSubmit = async (values: any) => {
     return navigateTo({ path: constantPath.SIGNIN_PAGE })
   }
   if (error.value.statusCode === 409) {
-    signinError.value = 'Cet email est déjà utilisé'
+    signinError.value = 'signup.error.email'
   } else {
-    signinError.value = 'Une erreur est survenue'
+    signinError.value = 'signup.error.generic'
   }
   loading.value = false
 }

@@ -18,8 +18,10 @@
     <Form @submit="onSubmit" class="flex flex-col gap-6 items-center">
       <Field v-slot="{ field, errorMessage }" name="email" class="m-auto w-80" rules="email" as="div">
         <span class="p-float-label">
-          <InputText id="email" v-bind="field" v-model="email" type="text" :class="{ 'p-invalid': errorMessage }"
-            class="w-full" />
+          <InputText
+            id="email" v-bind="field" v-model="email" type="text" :class="{ 'p-invalid': errorMessage }"
+            class="w-full"
+          />
           <label for="email">Email</label>
         </span>
         <small v-if="errorMessage" class="p-error !m-0">{{ errorMessage }}</small>
@@ -27,26 +29,34 @@
 
       <Field v-slot="{ field, errorMessage }" name="password" class="m-auto w-80" rules="required|minLength:8" as="div">
         <span class="p-float-label">
-          <Password id="password" v-bind="field" v-model="password" type="text" :class="{ 'p-invalid': errorMessage }"
-            inputClass="w-full" class="w-full" toggle-mask />
+          <Password
+            id="password" v-bind="field" v-model="password" type="text" :class="{ 'p-invalid': errorMessage }"
+            input-class="w-full" class="w-full" toggle-mask
+          />
           <label for="password">{{ $t('signup.password') }}</label>
         </span>
         <small v-if="errorMessage" class="p-error !m-0">{{ errorMessage }}</small>
       </Field>
 
-      <Field v-slot="{ field, errorMessage }" name="confirm" class="m-auto space-x-6 w-80" rules="confirmed:@password"
-        as="div">
+      <Field
+        v-slot="{ field, errorMessage }" name="confirm" class="m-auto space-x-6 w-80" rules="confirmed:@password"
+        as="div"
+      >
         <span class="p-float-label">
-          <Password id="confirm" v-bind="field" v-model="confirm" type="text" :class="{ 'p-invalid': errorMessage }"
-            inputClass="w-full" class="w-full" toggle-mask />
+          <Password
+            id="confirm" v-bind="field" v-model="confirm" type="text" :class="{ 'p-invalid': errorMessage }"
+            input-class="w-full" class="w-full" toggle-mask
+          />
           <label for="confirm">{{ $t('signup.passwordConfirm') }}</label>
         </span>
         <small v-if="errorMessage" class="p-error !m-0">{{ errorMessage }}</small>
       </Field>
 
       <div class="flex flex-col m-auto w-full gap-2">
-        <Button type="submit" :label="$t('signup.submit')" icon="pi pi-user" class="self-center w-full lg:w-1/2 lg:m-auto block"
-          :loading="loading" />
+        <Button
+          type="submit" :label="$t('signup.submit')" icon="pi pi-user" class="self-center w-full lg:w-1/2 lg:m-auto block"
+          :loading="loading"
+        />
       </div>
     </Form>
   </div>

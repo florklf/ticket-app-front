@@ -27,7 +27,8 @@
       <div class="m-auto space-x-6 w-80">
         <span class="p-float-label">
           <Password
-            id="password" v-model="password" :class="{ 'p-invalid': errors.password }" inputClass="w-full" class="w-full" :feedback="false"
+            id="password" v-model="password" :class="{ 'p-invalid': errors.password }" input-class="w-full" class="w-full"
+            :feedback="false"
             toggle-mask
           />
           <label for="password">Mot de passe</label>

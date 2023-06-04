@@ -16,20 +16,20 @@
 </template>
 
 <script setup>
-import { PATH as constantPath } from '@/constants/pages';
+import { PATH as constantPath } from '@/constants/pages'
 
-const currentYear = new Date().getFullYear();
+const currentYear = new Date().getFullYear()
 
 const navigation = {
   main: [
     {
       name: 'navbar.home',
-      to: constantPath.HOME_PAGE,
+      to: constantPath.HOME_PAGE
     },
     {
       name: 'navbar.concert',
-      to: constantPath.CONCERTS_PAGE,
-    },
-  ],
-};
+      to: constantPath.CONCERTS_PAGE
+    }
+  ]
+}
 </script>

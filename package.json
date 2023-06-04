@@ -15,7 +15,7 @@
     "@nuxt/devtools": "^0.5.5",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@nuxtjs/i18n": "^8.0.0-beta.12",
-    "@nuxtjs/tailwindcss": "^6.6.8",
+    "@nuxtjs/tailwindcss": "^6.7.0",
     "@sidebase/nuxt-auth": "^0.6.0-beta.1",
     "@sidebase/nuxt-session": "^0.2.7",
     "@tailwindcss/aspect-ratio": "^0.4.2",

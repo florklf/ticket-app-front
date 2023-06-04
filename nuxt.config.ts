@@ -29,9 +29,10 @@ export default defineNuxtConfig({
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
+      viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
       link: [
         { rel: "icon", type: "image/png", href: "/assets/favicon.png" },
-      ]
+      ],
     },
   },
 

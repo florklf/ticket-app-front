@@ -33,7 +33,12 @@ export default {
         events: {
             title: 'Next {next_events} to come',
             next: 'events',
-        }
+        },
+        hero: {
+            heading: 'Discover your {heading_gradient} concert',
+            heading_gradient: 'next unforgettable',
+            searchPlaceholder: 'Search for an event, an artist, a genre, a place...',
+        },
     },
     concert: {
         title: 'Concerts',

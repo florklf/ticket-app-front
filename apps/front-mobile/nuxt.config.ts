@@ -16,24 +16,20 @@ export default defineNuxtConfig({
     '@sidebase/nuxt-session',
     'nuxt-lodash',
     '@sfxcode/nuxt-primevue',
-    '@nuxtjs/i18n',
+    '@nuxtjs/i18n'
   ],
   i18n: {
-    vueI18n: './i18n.config.ts',
+    vueI18n: './i18n.config.ts'
   },
-
-  plugins: [
-    '~/plugins/fontawesome.js',
-  ],
 
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
       link: [
-        { rel: "icon", type: "image/png", href: "/assets/favicon.png" },
-      ],
-    },
+        { rel: 'icon', type: 'image/png', href: '/assets/favicon.png' }
+      ]
+    }
   },
 
   auth: {
@@ -63,8 +59,7 @@ export default defineNuxtConfig({
   css: [
     '~/assets/css/main.scss',
     'primevue/resources/primevue.css',
-    'primevue/resources/themes/soho-light/theme.css',
-    '@fortawesome/fontawesome-svg-core/styles.css',
+    'primevue/resources/themes/soho-light/theme.css'
   ],
 
   build: {
@@ -80,7 +75,7 @@ export default defineNuxtConfig({
     public: {
       apiBase: '',
       localExposedApiUrl: '',
-      googleApiKey: '',
+      googleApiKey: ''
     }
   },
 

@@ -5,11 +5,11 @@
   </NuxtLayout>
 </template>
 <script setup>
-useHead({
-  title: 'TicketApp',
-});
 import { defineRule } from 'vee-validate'
 import AllRules from '@vee-validate/rules'
+useHead({
+  title: 'TicketApp'
+})
 
 Object.keys(AllRules).forEach((rule) => {
   defineRule(rule, AllRules[rule])

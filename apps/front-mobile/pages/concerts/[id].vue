@@ -3,15 +3,16 @@
     <Head>
       <Title>{{ concert?.name }}</Title>
     </Head>
-    <Breadcrumb :home="{ to: '/', 'icon': 'fa-solid fa-house' }" :model="items" class="mb-6"
-      :style="{ 'border-radius': 0 }" />
+    <Breadcrumb
+      :home="{ to: '/', label: $t('navbar.home') }" :model="items" class="mb-6"
+      :style="{ 'border-radius': 0 }"
+    />
     <div class="container mx-auto">
       <div class="relative mb-32">
         <img :src="concert?.image" :alt="concert?.name" class="w-full object-cover h-60">
-        <div
-          class="text-3xl font-bold tracking-tight bg-primary text-textonprimary sm:text-4xl inline-block py-10 px-20 absolute bottom-[-3em]">
+        <div class="text-3xl font-bold tracking-tight bg-primary text-textonprimary sm:text-4xl inline-block py-10 px-20 absolute bottom-[-3em]">
           <h1>{{ concert?.name }}</h1>
-          <span class="text-xl font-normal block mb-8">{{ concert?.type }} - {{ concert?.artist?.name }}</span>
+          <span class="text-xl caca font-normal block mb-8">{{ concert?.type }} - {{ concert?.artist?.name }}</span>
           <div class="flex font-light text-lg gap-x-12">
             <div class="flex items-center gap-2">
               <Icon name="ic:sharp-place" />
@@ -37,9 +38,11 @@
               </p>
             </AccordionTab>
             <AccordionTab :header="$t('concert.details.place')">
-              <iframe class="w-full h-64" style="border:0" loading="lazy" allowfullscreen
+              <iframe
+                class="w-full h-64" style="border:0" loading="lazy" allowfullscreen
                 referrerpolicy="no-referrer-when-downgrade"
-                :src="`https://www.google.com/maps/embed/v1/place?key=${config.public.googleApiKey}&q=${concert?.place?.address} ${concert?.place?.city} ${concert?.place?.zip}`" />
+                :src="`https://www.google.com/maps/embed/v1/place?key=${config.public.googleApiKey}&q=${concert?.place?.address} ${concert?.place?.city} ${concert?.place?.zip}`"
+              />
               <p class="text-xl font-bold mt-6">
                 {{ concert?.place?.name }}
               </p>
@@ -60,12 +63,16 @@
           <form>
             <div class="sm:flex sm:flex-col sm:justify-between gap-4">
               <!-- Seat selector -->
-              <div v-for="eventSeatType in concert?.EventSeatType" :key="eventSeatType.id"
-                class="flex items-center bg-bghighlight text-texthighlight p-4 rounded">
+              <div
+                v-for="eventSeatType in concert?.EventSeatType" :key="eventSeatType.id"
+                class="flex items-center bg-bghighlight text-texthighlight p-4 rounded"
+              >
                 <label for="seat-type" class="grow text-xl font-medium">{{ eventSeatType.seatType.name }}</label>
                 <span class="text-xl font-bold mr-4">{{ eventSeatType.price }} €</span>
-                <InputNumber v-model="(seatsSelection as any)[eventSeatType.id]" class="" input-id="horizontal-buttons"
-                  show-buttons button-layout="horizontal" :step="1" :min="0" :max="eventSeatType.available_seats">
+                <InputNumber
+                  v-model="(seatsSelection as any)[eventSeatType.id]" class="" input-id="horizontal-buttons"
+                  show-buttons button-layout="horizontal" :step="1" :min="0" :max="eventSeatType.available_seats"
+                >
                   <template #decrementbuttonicon>
                     <Icon name="ic:baseline-minus" />
                   </template>
@@ -78,10 +85,14 @@
             <div class="mt-4">
               <a href="#" class="group inline-flex text-sm text-gray-500 hover:text-gray-700">
                 <span @click.prevent="showCategoryPopup = true">{{ $t('concert.reservation.seeCategories') }}</span>
-                <Dialog v-model:visible="showCategoryPopup" :dismissableMask="true" modal :draggable="false"
-                  header="Catégories de places disponibles" class="sm:w-3/4 md:w-1/2">
-                  <Fieldset v-for="eventSeatType in concert?.EventSeatType" :key="eventSeatType.id" class="mb-8"
-                    :legend="eventSeatType.seatType.name">
+                <Dialog
+                  v-model:visible="showCategoryPopup" :dismissable-mask="true" modal :draggable="false"
+                  header="Catégories de places disponibles" class="sm:w-3/4 md:w-1/2"
+                >
+                  <Fieldset
+                    v-for="eventSeatType in concert?.EventSeatType" :key="eventSeatType.id" class="mb-8"
+                    :legend="eventSeatType.seatType.name"
+                  >
                     <p>Prix: {{ eventSeatType.price }} €</p>
                     <p>Capacité: {{ eventSeatType.seatType.capacity }}</p>
                     <p class="mt-2">{{ eventSeatType.seatType.description }}</p>
@@ -90,10 +101,12 @@
               </a>
             </div>
             <div class="mt-2 flex justify-end">
-              <Button @click="addToCart" variant="secondary" size="large" :label="$t('concert.reservation.addToCart')"
+              <Button
+                v-tooltip.top="{ value: $t('concert.reservation.addToCartNotConnected'), disabled: status === 'authenticated', class: 'text-center' }" @click="addToCart" variant="secondary" size="large"
+                :label="$t('concert.reservation.addToCart')"
                 class="space-x-4"
                 :disabled="Object.values(seatsSelection).reduce((acc: any, curr) => acc + curr, 0) === 0 && status === 'authenticated'"
-                v-tooltip.top="{ value: $t('concert.reservation.addToCartNotConnected'), disabled: status === 'authenticated', class: 'text-center' }">
+              >
                 <template #icon>
                   <Icon name="material-symbols:add-shopping-cart" />
                 </template>
@@ -107,9 +120,9 @@
 </template>
 
 <script setup lang="ts">
-useHead({ titleTemplate: '%s » Concerts' });
-import { Concert } from '~/types/Events/Concert';
-import { PATH as constantPath } from '@/constants/pages';
+import { Concert } from '~/types/Events/Concert'
+import { PATH as constantPath } from '@/constants/pages'
+useHead({ titleTemplate: '%s » Concerts' })
 
 const route = useRoute()
 const dayjs = useDayjs()
@@ -117,19 +130,19 @@ const seatsSelection = reactive({})
 const config = useRuntimeConfig()
 const { status, data } = useAuth()
 const { data: concert } = await useCustomFetch<Concert>(`/events/${route.params.id}`)
-const i18n = useI18n();
+const i18n = useI18n()
 
 const items = ref([
   { label: i18n.t('concert.title'), to: constantPath.CONCERTS_PAGE },
   { label: concert.value?.name }
 ])
 const showCategoryPopup = ref(false)
-const userId = (data.value as any)?.user.id;
+const userId = (data.value as any)?.user.id
 
 const addToCart = async () => {
   // Check if user is authenticated and if he selected at least one seat
   if (status.value !== 'authenticated' || Object.values(seatsSelection).reduce((acc: any, curr) => acc + curr, 0) === 0) {
-    return;
+    return
   }
   try {
     for (const [id, quantity] of Object.entries(seatsSelection)) {
@@ -144,7 +157,7 @@ const addToCart = async () => {
           { name: 'event_name', value: concert.value?.name, type: 'string' },
           { name: 'event_type', value: concert.value?.type, type: 'string' },
           { name: 'event_date', value: dayjs(concert.value?.date).format('DD/MM/YYYY - hh[h]mm'), type: 'string' },
-          { name: 'event_place', value: concert.value?.place.name, type: 'string' },
+          { name: 'event_place', value: concert.value?.place.name, type: 'string' }
         ]
       })
       await window.Snipcart.api.cart.update({

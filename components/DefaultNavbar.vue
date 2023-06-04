@@ -9,7 +9,7 @@
               <Button @click="() => $router.push(constantPath.SIGNIN_PAGE)" size="small" :label="$t('navbar.signin')" />
             </template>
             <template v-else>
-              <Button @click="signOut()" severity="danger" size="small" :label="$t('navbar.signout')" outlined />
+              <Button @click="signOut({ callbackUrl: constantPath.HOME_PAGE })" severity="danger" size="small" :label="$t('navbar.signout')" outlined />
             </template>
           </div>
           <div class="hidden lg:block">
@@ -53,14 +53,10 @@
 
 <script setup lang="ts">
 import { PATH as constantPath } from '@/constants/pages';
+import { ILocale } from '@/types/ILocale';
 
 const { status, signOut } = useAuth();
 const { locale, availableLocales, setLocale } = useI18n();
-
-interface ILocale {
-  label: string;
-  value: string;
-}
 
 const getCountryFlag = (lang: string) => {
   if (lang === 'en') return '🇬🇧';

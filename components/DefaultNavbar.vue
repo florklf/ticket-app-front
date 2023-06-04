@@ -17,7 +17,11 @@
               @change="switchLang(lang)" class="xs:hidden" />
           </div>
           <div class="lg:hidden">
-            <Button @click="toggleMenu" size="small" icon="fa fa-bars" outlined />
+            <Button @click="toggleMenu" size="small" outlined>
+              <template #icon>
+                <Icon name="fa-solid:bars" />
+              </template>
+            </Button>
           </div>
         </div>
         <div class="justify-between items-center w-full lg:flex lg:w-auto lg:order-1" :class="{ 'hidden': !showMenu }">

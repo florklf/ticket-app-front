@@ -1,5 +1,5 @@
 <template>
-    <div class="relative">
+    <div class="relative h-full" v-if="loaded">
         <Carousel :value="HERO_IMAGES" :numVisible="1" :numScroll="1" :autoplayInterval="5000" :circular="true"
             :breakpoints="{ 768: { numVisible: 1, numScroll: 1 } }" :showIndicators="false" :showNavigators="false" class="pointer-events-none">
             <template #item="item">
@@ -18,21 +18,28 @@
             </i18n-t>
             <div class="mt-6 w-full">
                 <span class="p-input-icon-left w-full">
-                    <i class="fa fa-search" />
+                    <Icon name="fa-solid:search" />
                     <InputText v-model="search" class="p-inputtext-sm w-full"
                         :placeholder="$t('home.hero.searchPlaceholder')" />
                 </span>
             </div>
         </div>
     </div>
+    <Skeleton borderRadius="0" height="14rem" v-else />
 </template>
   
 <style scoped></style>
   
 <script setup lang="ts">
 const images = import.meta.glob('@/assets/images/hero/*.jpg');
-const HERO_IMAGES = Object.keys(images).map((path) => path);
 
 const search = ref('');
+const loaded = ref(false);
+
+const HERO_IMAGES = Object.keys(images).map((path) => path);
+
+onMounted(() => {
+    loaded.value = true;
+});
 </script>
   

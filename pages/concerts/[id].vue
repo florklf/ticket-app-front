@@ -78,7 +78,7 @@
             <div class="mt-4">
               <a href="#" class="group inline-flex text-sm text-gray-500 hover:text-gray-700">
                 <span @click.prevent="showCategoryPopup = true">{{ $t('concert.reservation.seeCategories') }}</span>
-                <Dialog v-model:visible="showCategoryPopup" :dismissableMask="true" modal
+                <Dialog v-model:visible="showCategoryPopup" :dismissableMask="true" modal :draggable="false"
                   header="Catégories de places disponibles" class="sm:w-3/4 md:w-1/2">
                   <Fieldset v-for="eventSeatType in concert?.EventSeatType" :key="eventSeatType.id" class="mb-8"
                     :legend="eventSeatType.seatType.name">
@@ -92,6 +92,7 @@
             <div class="mt-2 flex justify-end">
               <Button @click="addToCart" variant="secondary" size="large" :label="$t('concert.reservation.addToCart')"
                 class="space-x-4"
+                :disabled="Object.values(seatsSelection).reduce((acc: any, curr) => acc + curr, 0) === 0 && status === 'authenticated'"
                 v-tooltip.top="{ value: $t('concert.reservation.addToCartNotConnected'), disabled: status === 'authenticated', class: 'text-center' }">
                 <template #icon>
                   <Icon name="material-symbols:add-shopping-cart" />
@@ -114,7 +115,7 @@ const route = useRoute()
 const dayjs = useDayjs()
 const seatsSelection = reactive({})
 const config = useRuntimeConfig()
-const { status } = useAuth()
+const { status, data } = useAuth()
 const { data: concert } = await useCustomFetch<Concert>(`/events/${route.params.id}`)
 const i18n = useI18n();
 
@@ -123,6 +124,7 @@ const items = ref([
   { label: concert.value?.name }
 ])
 const showCategoryPopup = ref(false)
+const userId = (data.value as any)?.user.id;
 
 const addToCart = async () => {
   // Check if user is authenticated and if he selected at least one seat
@@ -142,7 +144,13 @@ const addToCart = async () => {
           { name: 'event_name', value: concert.value?.name, type: 'string' },
           { name: 'event_type', value: concert.value?.type, type: 'string' },
           { name: 'event_date', value: dayjs(concert.value?.date).format('DD/MM/YYYY - hh[h]mm'), type: 'string' },
-          { name: 'event_place', value: concert.value?.place.name, type: 'string' }
+          { name: 'event_place', value: concert.value?.place.name, type: 'string' },
+        ]
+      })
+      await window.Snipcart.api.cart.update({
+        // @ts-ignore
+        customFields: [
+          { name: 'userId', value: userId, type: 'string' }
         ]
       })
     }

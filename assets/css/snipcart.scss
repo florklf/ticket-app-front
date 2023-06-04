@@ -3,6 +3,9 @@
         Colors
     ----------------- */
     .snipcart-base-button {
-        background-color: var(--primary-color) !important;
+        background-color: var(--primary-color);
+    }
+    .snipcart-base-button__label, .snipcart-base-button__icon {
+        color: white;
     }
 }

@@ -3,7 +3,8 @@ export default {
     home: 'Accueil',
     concert: 'Concerts',
     signin: 'Je me connecte',
-    signout: 'Je me déconnecte'
+    signout: 'Je me déconnecte',
+    dashboard: 'Dashboard'
   },
   footer: {
     rights: 'Tous droits réservés'
@@ -46,11 +47,55 @@ export default {
       title: 'Sélectionnez vos places',
       seeCategories: 'Quelle catégorie devrais-je choisir ?',
       addToCart: 'Ajouter au panier',
-      addToCartNotConnected: 'Vous devez être connecté pour ajouter des places à votre panier.'
+      addToCartNotConnected: 'Vous devez être connecté pour ajouter des places à votre panier.',
+      modalAvailableSeatType: 'Catégories de places disponibles'
     },
     details: {
       description: 'Description de l\'événement',
       place: 'Emplacement'
+    }
+  },
+  dashboard: {
+    title: 'Dashboard',
+    order: {
+      title: 'Commande',
+      at: 'à',
+      orderList: {
+        title: 'Mes commandes',
+        empty: 'Vous n\'avez pas encore passé de commande.',
+        billingAddress: 'Adresse de facturation',
+        shippingAddress: 'Adresse de livraison',
+        buyingDate: 'Date d\'achat',
+        seatType: 'Type de place',
+        price: 'Prix',
+        quantity: 'Quantité',
+        quantityLabel: 'billet(s)',
+        totalPrice: 'Prix total',
+        qrCode: 'QR Code',
+        qrCodeModal: {
+          title: 'Affichage des billets',
+          description: 'Veuillez présenter ce QR Code à l\'entrée de l\'événement.',
+          ticket: 'Billet'
+        },
+        payment: {
+          title: 'Paiement',
+          paymentMethod: 'Méthode de paiement',
+          paymentStatus: 'Statut du paiement',
+          cardNumber: 'Numéro de carte',
+          paymentDate: 'Date de paiement'
+        },
+        event: {
+          title: 'Événement',
+          date: 'Rendez-vous le'
+        },
+        place: {
+          title: 'Lieu',
+          addressReminder: 'Avec l\'adresse, c\'est toujours mieux !'
+        }
+      }
+    },
+    profile: {
+      title: 'Profil'
     }
   }
 }

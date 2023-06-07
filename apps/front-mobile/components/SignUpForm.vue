@@ -1,13 +1,15 @@
 <template>
   <div class="surface-card p-4 border-round w-full lg:w-1/2 m-auto">
-    <div class="text-center mb-4">
-      <div class="text-900 text-3xl font-medium mb-3">
+    <div class="text-center mt-8">
+      <div class="text-900 text-3xl font-medium">
         {{ $t('signup.title') }}
       </div>
-      <span class="text-600 font-medium line-height-3">{{ $t('signup.subtitle') }}</span>
-      <NuxtLink :to="constantPath.SIGNIN_PAGE" class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">
-        {{ $t('signup.signin') }}
-      </NuxtLink>
+      <div class="mt-4 mb-8">
+        <span class="text-600 font-medium line-height-3">{{ $t('signup.subtitle') }}</span>
+        <NuxtLink :to="constantPath.SIGNIN_PAGE" class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">
+          {{ $t('signup.signin') }}
+        </NuxtLink>
+      </div>
     </div>
 
     <div class="m-6">
@@ -54,7 +56,7 @@
 
       <div class="flex flex-col m-auto w-full gap-2">
         <Button
-          type="submit" :label="$t('signup.submit')" icon="pi pi-user" class="self-center w-full lg:w-1/2 lg:m-auto block"
+          type="submit" :label="$t('signup.submit')" class="self-center w-full lg:w-1/2 lg:m-auto block"
           :loading="loading"
         />
       </div>

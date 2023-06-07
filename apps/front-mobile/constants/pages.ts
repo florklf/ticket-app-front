@@ -3,6 +3,7 @@ const ENUM_PAGE = {
   CONCERTS_PAGE: 'CONCERTS_PAGE',
   SIGNIN_PAGE: 'SIGNIN_PAGE',
   SIGNUP_PAGE: 'SIGNUP_PAGE',
+  DASHBOARD_PAGE: 'DASHBOARD',
   PRIVACY_POLICY_PAGE: 'PRIVACY_POLICY_PAGE',
   LEGAL_NOTICE_PAGE: 'LEGAL_NOTICE_PAGE',
   NOT_FOUND_PAGE: 'NOT_FOUND_PAGE'
@@ -13,6 +14,7 @@ export const PATH = {
   [ENUM_PAGE.CONCERTS_PAGE]: '/concerts',
   [ENUM_PAGE.SIGNIN_PAGE]: '/signin',
   [ENUM_PAGE.SIGNUP_PAGE]: '/signup',
+  [ENUM_PAGE.DASHBOARD_PAGE]: '/dashboard',
   [ENUM_PAGE.PRIVACY_POLICY_PAGE]: '/privacy-policy',
   [ENUM_PAGE.LEGAL_NOTICE_PAGE]: '/legal-notice'
 }
@@ -22,6 +24,7 @@ export const TITLE = {
   [ENUM_PAGE.CONCERTS_PAGE]: 'Concerts',
   [ENUM_PAGE.SIGNIN_PAGE]: 'Connexion',
   [ENUM_PAGE.SIGNUP_PAGE]: 'Inscription',
+  [ENUM_PAGE.DASHBOARD_PAGE]: 'Dashboard',
   [ENUM_PAGE.PRIVACY_POLICY_PAGE]: 'Politique de confidentialité',
   [ENUM_PAGE.LEGAL_NOTICE_PAGE]: 'Mentions légales',
   [ENUM_PAGE.NOT_FOUND_PAGE]: 'Page non trouvée'

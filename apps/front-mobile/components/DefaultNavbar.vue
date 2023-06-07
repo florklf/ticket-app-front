@@ -1,15 +1,34 @@
 <template>
-  <header class="sticky top-0 z-50 bg-white shadow-md">
+  <header class="sticky top-0 z-20 bg-white shadow-md">
     <nav class="border-gray-200 px-4 lg:px-6 py-2.5">
       <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
         <NuxtLink :to="constantPath.HOME_PAGE" class="styled-logo" />
-        <div class="flex items-center gap-x-3 lg:order-2">
+        <div class="flex items-center gap-x-2 lg:order-2">
           <div>
             <template v-if="status === 'unauthenticated'">
-              <Button @click="() => $router.push(constantPath.SIGNIN_PAGE)" size="small" :label="$t('navbar.signin')" />
+              <NuxtLink :to="constantPath.SIGNIN_PAGE">
+                <Button :label="$t('navbar.signin')" />
+              </NuxtLink>
             </template>
             <template v-else>
-              <Button @click="signOut({ callbackUrl: constantPath.HOME_PAGE })" severity="danger" size="small" :label="$t('navbar.signout')" outlined />
+              <NuxtLink :to="constantPath.HOME_PAGE">
+                <Button @click="signOut({ callbackUrl: constantPath.HOME_PAGE })" severity="danger" outlined>
+                  <template #icon>
+                    <Icon name="fa6-solid:right-from-bracket" />
+                  </template>
+                </Button>
+              </NuxtLink>
+            </template>
+          </div>
+          <div>
+            <template v-if="status === 'authenticated'">
+              <NuxtLink to="/dashboard">
+                <Button outlined>
+                  <template #icon>
+                    <Icon name="fa-solid:user" />
+                  </template>
+                </Button>
+              </NuxtLink>
             </template>
           </div>
           <div class="hidden lg:block">
@@ -19,7 +38,7 @@
             />
           </div>
           <div class="lg:hidden">
-            <Button @click="toggleMenu" size="small" outlined>
+            <Button @click="toggleMenu" outlined>
               <template #icon>
                 <Icon name="fa-solid:bars" />
               </template>

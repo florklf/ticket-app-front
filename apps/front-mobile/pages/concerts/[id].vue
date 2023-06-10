@@ -31,7 +31,7 @@
       </div>
       <div class="mx-auto max-w-2xl px-2 lg:grid lg:max-w-full lg:grid-cols-2 lg:gap-x-12">
         <!-- concert details -->
-        <section class="mt-4">
+        <section class="my-4">
           <Accordion :active-index="0">
             <AccordionTab :header="$t('concert.details.description')">
               <template v-for="i in 4">
@@ -43,8 +43,7 @@
             </AccordionTab>
             <AccordionTab :header="$t('concert.details.place')">
               <iframe
-                v-if="concert"
-                class="w-full h-64" style="border:0" loading="lazy" allowfullscreen
+                v-if="concert" class="w-full h-64" style="border:0" loading="lazy" allowfullscreen
                 referrerpolicy="no-referrer-when-downgrade"
                 :src="`https://www.google.com/maps/embed/v1/place?key=${config.public.googleApiKey}&q=${concert?.place?.address} ${concert?.place?.city} ${concert?.place?.zip}`"
               />
@@ -70,7 +69,7 @@
         <section class="space-y-4">
           <span class="text-text text-2xl">{{ $t('concert.reservation.title') }} :</span>
           <form>
-            <div class="sm:flex sm:flex-col sm:justify-between gap-4">
+            <div class="flex flex-col justify-between gap-4">
               <!-- Seat selector -->
               <template v-for="i in 3">
                 <Skeleton v-if="!concert" :key="i" height="5rem" />
@@ -82,7 +81,7 @@
                 <label for="seat-type" class="grow text-xl font-medium">{{ eventSeatType.seatType.name }}</label>
                 <span class="text-xl font-bold mr-4">{{ eventSeatType.price }} €</span>
                 <InputNumber
-                  v-model="(seatsSelection as any)[eventSeatType.id]" class="" input-id="horizontal-buttons"
+                  v-model="(seatsSelection as any)[eventSeatType.id]" input-id="horizontal-buttons"
                   show-buttons button-layout="horizontal" :step="1" :min="0" :max="eventSeatType.available_seats"
                 >
                   <template #decrementbuttonicon>
@@ -94,12 +93,12 @@
                 </InputNumber>
               </div>
             </div>
-            <div class="mt-4">
+            <div class="my-4">
               <a href="#" class="group inline-flex text-sm text-gray-500 hover:text-gray-700">
                 <span @click.prevent="showCategoryPopup = true">{{ $t('concert.reservation.seeCategories') }}</span>
                 <Dialog
                   v-model:visible="showCategoryPopup" :dismissable-mask="true" modal :draggable="false"
-                  header="Catégories de places disponibles" class="sm:w-3/4 md:w-1/2"
+                  class="w-full m-3 sm:w-3/4 sm:m-0" :header="$t('concert.reservation.modalAvailableSeatType')"
                 >
                   <Fieldset
                     v-for="eventSeatType in concert?.EventSeatType" :key="eventSeatType.id" class="mb-8"
@@ -112,10 +111,10 @@
                 </Dialog>
               </a>
             </div>
-            <div class="mt-2 flex justify-end">
+            <div class="flex justify-center sm:justify-end">
+              <Toast group="reservation" />
               <Button
-                v-tooltip.top="{ value: $t('concert.reservation.addToCartNotConnected'), disabled: status === 'authenticated', class: 'text-center' }" @click="addToCart" variant="secondary" size="large"
-                :label="$t('concert.reservation.addToCart')"
+                @click="addToCart" variant="secondary" size="large" :label="$t('concert.reservation.addToCart')"
                 class="space-x-4"
                 :disabled="Object.values(seatsSelection).reduce((acc: any, curr) => acc + curr, 0) === 0 && status === 'authenticated'"
               >
@@ -132,12 +131,14 @@
 </template>
 
 <script setup lang="ts">
+import { useToast } from 'primevue/usetoast'
 import { Concert } from '~/types/Events/Concert'
 import { PATH as constantPath } from '@/constants/pages'
 useHead({ titleTemplate: '%s » Concerts' })
 
 const route = useRoute()
 const dayjs = useDayjs()
+const toast = useToast()
 const seatsSelection = reactive({})
 const config = useRuntimeConfig()
 const { status, data } = useAuth()
@@ -153,7 +154,16 @@ const userId = (data.value as any)?.user.id
 
 const addToCart = async () => {
   // Check if user is authenticated and if he selected at least one seat
-  if (status.value !== 'authenticated' || Object.values(seatsSelection).reduce((acc: any, curr) => acc + curr, 0) === 0) {
+  if (status.value !== 'authenticated') {
+    toast.removeGroup('reservation')
+    return toast.add({
+      severity: 'info',
+      summary: i18n.t('concert.reservation.addToCartNotConnected'),
+      life: 5000,
+      group: 'reservation'
+    })
+  }
+  if (Object.values(seatsSelection).reduce((acc: any, curr) => acc + curr, 0) === 0) {
     return
   }
   try {

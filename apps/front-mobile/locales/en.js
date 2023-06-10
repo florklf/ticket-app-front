@@ -3,7 +3,8 @@ export default {
     home: 'Home',
     concert: 'Concerts',
     signin: 'I sign in',
-    signout: 'I sign out'
+    signout: 'I sign out',
+    dashboard: 'Dashboard'
   },
   footer: {
     rights: 'All rights reserved'
@@ -46,11 +47,55 @@ export default {
       title: 'Select your seats',
       seeCategories: 'Which category should I choose?',
       addToCart: 'Add to cart',
-      addToCartNotConnected: 'You must be logged in to add seats to your cart.'
+      addToCartNotConnected: 'You must be logged in to add seats to your cart.',
+      modalAvailableSeatType: 'Available seat categories'
     },
     details: {
       description: 'Event description',
       place: 'Place'
+    }
+  },
+  dashboard: {
+    title: 'Dashboard',
+    order: {
+      title: 'Order',
+      at: 'à',
+      orderList: {
+        title: 'My orders',
+        empty: 'You have no orders yet.',
+        billingAddress: 'Billing address',
+        shippingAddress: 'Shipping address',
+        buyingDate: 'Buying date',
+        seatType: 'Seat type',
+        price: 'Price',
+        quantity: 'Quantity',
+        quantityLabel: 'ticket(s)',
+        totalPrice: 'Total price',
+        qrCode: 'QR Code',
+        qrCodeModal: {
+          title: 'Tickets display',
+          description: 'Please present this QR Code at the entrance of the event.',
+          ticket: 'Ticket'
+        },
+        payment: {
+          title: 'Payment',
+          paymentMethod: 'Payment method',
+          paymentStatus: 'Payment status',
+          cardNumber: 'Card number',
+          paymentDate: 'Payment date'
+        },
+        event: {
+          title: 'Événement',
+          date: 'See you on'
+        },
+        place: {
+          title: 'Place',
+          addressReminder: 'Even better with the address uh?'
+        }
+      }
+    },
+    profile: {
+      title: 'Profile'
     }
   }
 }

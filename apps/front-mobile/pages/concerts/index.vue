@@ -13,13 +13,15 @@
           <h2 class="text-2xl font-bold leading-7 sm:truncate sm:text-3xl sm:tracking-tight mb-4">
             Concerts
           </h2>
-          <div class="flex mb-8 gap-2">
-            <Button
-              v-for="genre in genres" :key="genre.id"
-              @click=" selectedGenre = selectedGenre == genre.name ? null : genre.name"
-              :outlined="genre.name != selectedGenre" :class="{ 'outlined': genre.name == selectedGenre }"
-              class="flex-1 outlined" size="small" :label="genre.name"
-            />
+          <div class="flex items-center mb-2">
+            <ScrollPanel orientation="horizontal" class="w-full" :pt="{content: { class: 'flex gap-2 overflow-hidden' }}">
+              <Button
+                v-for="genre in genres" :key="genre.id"
+                @click=" selectedGenre = selectedGenre == genre.name ? null : genre.name"
+                :outlined="genre.name != selectedGenre" :class="{ 'outlined': genre.name == selectedGenre }"
+                class="grow shrink-0 outlined" size="small" :label="genre.name"
+              />
+            </ScrollPanel>
           </div>
           <div v-if="concertsCount == 0" class="flex justify-center my-8">
             <p class="text-gray-500">

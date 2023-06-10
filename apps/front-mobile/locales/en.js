@@ -14,7 +14,9 @@ export default {
     subtitle: 'You are not a member yet?',
     signup: 'Join us',
     forgot: 'Forgot password?',
-    error: 'An error occurred while logging in. Please check the information entered.',
+    error: {
+      generic: 'An error occurred while logging in. Please check the information entered.'
+    },
     submit: 'I sign in'
   },
   signup: {
@@ -26,6 +28,8 @@ export default {
       email: 'This email is already used.',
       generic: 'An error occurred'
     },
+    firstname: 'Firstname',
+    lastname: 'Lastname',
     password: 'Password',
     passwordConfirm: 'Confirm password'
   },

@@ -14,7 +14,9 @@ export default {
     subtitle: 'Vous n\'êtes pas encore membre ?',
     signup: 'Rejoignez-nous',
     forgot: 'Mot de passe oublié ?',
-    error: 'Une erreur est survenue lors de la connexion. Veuillez vérifier les informations saisies.',
+    error: {
+      generic: 'Une erreur est survenue lors de la connexion. Veuillez vérifier les informations saisies.'
+    },
     submit: 'Je me connecte'
   },
   signup: {
@@ -26,6 +28,8 @@ export default {
       email: 'Cet email est déjà utilisé.',
       generic: 'Une erreur est survenue'
     },
+    firstname: 'Prénom',
+    lastname: 'Nom',
     password: 'Mot de passe',
     passwordConfirm: 'Confirmer le mot de passe'
   },

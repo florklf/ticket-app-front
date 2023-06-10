@@ -13,11 +13,33 @@
     </div>
 
     <div class="m-6">
-      <Message v-if="signinError" class="p-message-error mb-6" :closable="false">
-        {{ signinError }}
+      <Message v-if="signupError" class="p-message-error mb-6" :closable="false">
+        {{ $t(signupError) }}
       </Message>
     </div>
     <Form @submit="onSubmit" class="flex flex-col gap-6 items-center">
+      <Field v-slot="{ field, errorMessage }" name="firstname" class="m-auto w-80" rules="required" as="div">
+        <span class="p-float-label">
+          <InputText
+            id="firstname" v-bind="field" v-model="firstname" type="text" :class="{ 'p-invalid': errorMessage }"
+            class="w-full"
+          />
+          <label for="firstname">{{ $t('signup.firstname') }}</label>
+        </span>
+        <small v-if="errorMessage" class="p-error !m-0">{{ errorMessage }}</small>
+      </Field>
+
+      <Field v-slot="{ field, errorMessage }" name="lastname" class="m-auto w-80" rules="required" as="div">
+        <span class="p-float-label">
+          <InputText
+            id="lastname" v-bind="field" v-model="lastname" type="text" :class="{ 'p-invalid': errorMessage }"
+            class="w-full"
+          />
+          <label for="lastname">{{ $t('signup.lastname') }}</label>
+        </span>
+        <small v-if="errorMessage" class="p-error !m-0">{{ errorMessage }}</small>
+      </Field>
+
       <Field v-slot="{ field, errorMessage }" name="email" class="m-auto w-80" rules="email" as="div">
         <span class="p-float-label">
           <InputText
@@ -68,8 +90,8 @@
 import { PATH as constantPath } from '@/constants/pages'
 
 const loading = ref(false)
-const [email, password, confirm] = [ref(''), ref(''), ref('')]
-const signinError = ref()
+const [firstname, lastname, email, password, confirm] = [ref(''), ref(''), ref(''), ref(''), ref('')]
+const signupError = ref()
 
 const onSubmit = async (values: any) => {
   loading.value = true
@@ -79,9 +101,9 @@ const onSubmit = async (values: any) => {
     return navigateTo({ path: constantPath.SIGNIN_PAGE })
   }
   if (error.value.statusCode === 409) {
-    signinError.value = 'signup.error.email'
+    signupError.value = 'signup.error.email'
   } else {
-    signinError.value = 'signup.error.generic'
+    signupError.value = 'signup.error.generic'
   }
   loading.value = false
 }

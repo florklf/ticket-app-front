@@ -9,7 +9,8 @@
     />
     <div class="container mx-auto">
       <div class="relative mb-32">
-        <img :src="concert?.image" :alt="concert?.name" class="w-full object-cover h-60">
+        <img v-if="concert" :src="concert?.image" :alt="concert?.name" class="w-full object-cover h-60">
+        <Skeleton v-if="!concert" height="15rem" class="z-0" />
         <div class="text-3xl font-bold tracking-tight bg-primary text-textonprimary sm:text-4xl inline-block py-10 px-20 absolute bottom-[-3em]">
           <h1>{{ concert?.name }}</h1>
           <span class="text-xl caca font-normal block mb-8">{{ concert?.type }} - {{ concert?.artist?.name }}</span>
@@ -33,16 +34,24 @@
         <section class="mt-4">
           <Accordion :active-index="0">
             <AccordionTab :header="$t('concert.details.description')">
+              <template v-for="i in 4">
+                <Skeleton v-if="!concert" :key="i" class="mb-2" />
+              </template>
               <p class="text-base text-gray-500">
                 {{ concert?.description }}
               </p>
             </AccordionTab>
             <AccordionTab :header="$t('concert.details.place')">
               <iframe
+                v-if="concert"
                 class="w-full h-64" style="border:0" loading="lazy" allowfullscreen
                 referrerpolicy="no-referrer-when-downgrade"
                 :src="`https://www.google.com/maps/embed/v1/place?key=${config.public.googleApiKey}&q=${concert?.place?.address} ${concert?.place?.city} ${concert?.place?.zip}`"
               />
+              <Skeleton v-if="!concert" height="16rem" />
+              <template v-for="i in 5">
+                <Skeleton v-if="!concert" :key="i" class="my-2" />
+              </template>
               <p class="text-xl font-bold mt-6">
                 {{ concert?.place?.name }}
               </p>
@@ -63,6 +72,9 @@
           <form>
             <div class="sm:flex sm:flex-col sm:justify-between gap-4">
               <!-- Seat selector -->
+              <template v-for="i in 3">
+                <Skeleton v-if="!concert" :key="i" height="5rem" />
+              </template>
               <div
                 v-for="eventSeatType in concert?.EventSeatType" :key="eventSeatType.id"
                 class="flex items-center bg-bghighlight text-texthighlight p-4 rounded"

@@ -63,7 +63,7 @@ const loading = ref(false)
 const validationSchema = toTypedSchema(
   zod.object({
     email: zod.string().email({ message: "L'email n'est pas valide" }),
-    password: zod.string().min(8, { message: '8 caractères minimum' })
+    password: zod.string().min(4, { message: '4 caractères minimum' })
   })
 )
 const { handleSubmit, errors } = useForm({

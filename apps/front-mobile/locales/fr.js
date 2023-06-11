@@ -42,7 +42,12 @@ export default {
     hero: {
       heading: 'Découvrez votre {heading_gradient} inoubliable',
       heading_gradient: 'prochain concert',
-      searchPlaceholder: 'Rechercher un événement, un artiste, un genre, un lieu...'
+      searchPlaceholder: 'Rechercher un événement, un artiste, un genre, un lieu...',
+      searchResults: 'Résultats de recherche',
+      searchResultsCount: '{count} événement|{count} événements',
+      emptySearchMessage: 'Aucun résultat pour cette recherche.',
+      searchResultsMore: 'Voir plus...',
+      searchResultsSee: 'Voir les résultats'
     }
   },
   concert: {
@@ -56,8 +61,14 @@ export default {
     },
     details: {
       description: 'Description de l\'événement',
+      inLineUp: 'À l\'affiche',
       place: 'Emplacement'
     }
+  },
+  search: {
+    title: 'Résultats pour: "{query}"',
+    noResults: 'Aucun résultat pour cette recherche.',
+    resultsCount: '{count} résultat|{count} résultats'
   },
   dashboard: {
     title: 'Dashboard',

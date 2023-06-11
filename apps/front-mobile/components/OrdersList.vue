@@ -83,7 +83,12 @@
                       <Icon name="fa6-solid:clock" class="mr-2" />
                       <span class="font-bold">{{ $t('dashboard.order.orderList.event.date') }}:</span>
                       <span class="ml-2">
-                        {{ new Date(orderEvent.date).toLocaleDateString() }}
+                        {{ new Date(orderEvent.date).toLocaleDateString(locale, {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        }) }}
                         {{ $t('dashboard.order.at') }}
                         {{ new Date(orderEvent.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
                       </span>
@@ -122,7 +127,12 @@
               <div class="flex items-center">
                 <span class="font-bold">{{ $t('dashboard.order.orderList.payment.paymentDate') }}:</span>
                 <span class="ml-2">
-                  {{ new Date(orderPayment.created_at).toLocaleDateString() }}
+                  {{ new Date(orderEvent.date).toLocaleDateString(locale, {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  }) }}
                   {{ $t('dashboard.order.at') }}
                   {{ new Date(orderPayment.created_at).toLocaleTimeString() }}
                 </span>
@@ -157,6 +167,7 @@
 <script setup>
 import { useToast } from 'primevue/usetoast'
 
+const i18n = useI18n()
 const config = useRuntimeConfig()
 const expandedRows = ref([])
 const orderItems = reactive({})
@@ -165,6 +176,7 @@ const orderEvent = ref({})
 const showQRCodeModal = ref(false)
 const modalQrCodes = ref(null)
 const toast = useToast()
+const locale = ref(i18n.locale.value === 'fr' ? 'fr-FR' : 'en-US')
 
 const { data: ordersData, error } = await useCustomFetch('/orders')
 if (error.value) {

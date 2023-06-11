@@ -3,8 +3,7 @@
     <Carousel
       v-if="loaded" :value="HERO_IMAGES" :num-visible="1" :num-scroll="1" :autoplay-interval="5000"
       :circular="true" :breakpoints="{ 768: { numVisible: 1, numScroll: 1 } }" :show-indicators="false"
-      :show-navigators="false"
-      class="pointer-events-none"
+      :show-navigators="false" class="pointer-events-none"
     >
       <template #item="item">
         <div class="absolute top-0 bottom-0 w-full bg-gradient-to-r to-transparent from-purple-500 opacity-25 z-10" />
@@ -23,23 +22,79 @@
           </span>
         </template>
       </i18n-t>
-      <div class="mt-6 w-full">
-        <span class="p-input-icon-left w-full">
-          <Icon name="fa-solid:search" />
-          <InputText v-model="search" class="p-inputtext-sm w-full" :placeholder="$t('home.hero.searchPlaceholder')" />
-        </span>
+      <div class="flex justify-start mt-6 w-full p-input-icon-left">
+        <AutoComplete
+          v-model="query" @complete="search" @item-select="onItemSelect" @keyup.enter="() => (query && foundEvents.total === 0) && $router.push({ path: '/search', query: { q: query } })"
+          class="p-input-icon-left w-full"
+          option-label="name"
+          data-key="id" complete-on-focus :suggestions="foundEvents.results" :min-length="3" scroll-height="200"
+          :placeholder="$t('home.hero.searchPlaceholder')" :pt="{ input: { class: 'flex-1' } }"
+          :empty-search-message="$t('home.hero.emptySearchMessage')"
+          :search-message="$t('home.hero.searchResultsCount', { count: foundEvents.total })"
+        >
+          <template #header>
+            <div class="flex items-center justify-between px-3 pt-3">
+              <span class="text-sm text-primary font-semibold">
+                {{ $t('home.hero.searchResults') }}
+              </span>
+              <span class="text-sm text-primary font-semibold">
+                {{ $t('home.hero.searchResultsCount', { count: foundEvents.total }) }}
+              </span>
+            </div>
+          </template>
+          <template #footer>
+            <div class="flex items-center justify-start px-3 pb-3 bg-grey">
+              <NuxtLink class="text-sm text-primary" :to="{ name: 'search', query: { q: query } }">
+                <template v-if="foundEvents.total > MAX_RESULTS">
+                  {{ $t('home.hero.searchResultsMore') }}
+                </template>
+                <template v-else>
+                  {{ $t('home.hero.searchResultsSee') }}
+                </template>
+              </NuxtLink>
+            </div>
+          </template>
+        </AutoComplete>
+        <Icon v-if="!isSearchingEvents" name="fa-solid:search" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const images = import.meta.glob('@/assets/images/hero/*.jpg')
+import pluralize from 'pluralize'
 
-const search = ref('')
+const images = import.meta.glob('@/assets/images/hero/*.jpg', { eager: true, import: 'default' })
+
+const router = useRouter()
 const loaded = ref(false)
+const query = ref()
+const isSearchingEvents = ref(false)
+const foundEvents = ref<{ results: any[], total: number }>({ results: [], total: 0 })
 
-const HERO_IMAGES = Object.keys(images).map(path => path)
+const MAX_RESULTS = 3
+const HERO_IMAGES = Object.keys(images).map(key => images[key])
+
+const search = async (event: any) => {
+  isSearchingEvents.value = true
+  const { data: foundEventsData }: any = await useCustomFetch('/search', {
+    method: 'POST',
+    body: JSON.stringify({
+      query: event.query,
+      size: MAX_RESULTS,
+      page: 0
+    })
+  })
+  foundEvents.value = foundEventsData.value
+  isSearchingEvents.value = false
+}
+
+const onItemSelect = (event: any) => {
+  query.value = event.value
+  router.push({
+    path: `/${pluralize(event.value.type.toLowerCase())}/${event.value.id}`
+  })
+}
 
 onMounted(() => {
   loaded.value = true

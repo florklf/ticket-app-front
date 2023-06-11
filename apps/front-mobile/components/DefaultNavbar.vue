@@ -114,7 +114,7 @@ const toggleMenu = () => {
   text-decoration: none;
   height: 30px;
   width: 135px;
-  background-image: url('@/assets/logo.png');
+  background-image: url('/logo.png');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: contain;

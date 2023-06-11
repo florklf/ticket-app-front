@@ -42,7 +42,12 @@ export default {
     hero: {
       heading: 'Discover your {heading_gradient} concert',
       heading_gradient: 'next unforgettable',
-      searchPlaceholder: 'Search for an event, an artist, a genre, a place...'
+      searchPlaceholder: 'Search for an event, an artist, a genre, a place...',
+      searchResults: 'Search results',
+      searchResultsCount: '{count} event|{count} events',
+      emptySearchMessage: 'No results for this search.',
+      searchResultsMore: 'See more...',
+      searchResultsSee: 'See results'
     }
   },
   concert: {
@@ -59,11 +64,16 @@ export default {
       place: 'Place'
     }
   },
+  search: {
+    title: 'Results for "{query}"',
+    noResults: 'No results for this search.',
+    resultsCount: '{count} result|{count} results'
+  },
   dashboard: {
     title: 'Dashboard',
     order: {
       title: 'Order',
-      at: 'à',
+      at: 'at',
       orderList: {
         title: 'My orders',
         empty: 'You have no orders yet.',

@@ -8,12 +8,12 @@
       :style="{ 'border-radius': 0 }"
     />
     <div class="container mx-auto">
-      <div class="relative mb-32">
+      <div class="relative sm:mb-40 md:mb-32">
         <img v-if="concert" :src="concert?.image" :alt="concert?.name" class="w-full object-cover h-60">
         <Skeleton v-if="!concert" height="15rem" class="z-0" />
-        <div class="text-3xl font-bold tracking-tight bg-primary text-textonprimary sm:text-4xl inline-block py-10 px-20 absolute bottom-[-3em]">
+        <div class="text-3xl font-bold tracking-tight bg-primary text-textonprimary sm:text-4xl inline-block py-10 px-20 w-full sm:w-auto sm:absolute sm:rounded-tr-3xl sm:bottom-[-4em] md:bottom-[-3em]">
           <h1>{{ concert?.name }}</h1>
-          <span class="text-xl caca font-normal block mb-8">{{ concert?.type }} - {{ concert?.artist?.name }}</span>
+          <span class="text-xl font-normal block mb-8">{{ concert?.type }} - {{ concert?.artist?.name }}</span>
           <div class="flex font-light text-lg gap-x-12">
             <div class="flex items-center gap-2">
               <Icon name="ic:sharp-place" />

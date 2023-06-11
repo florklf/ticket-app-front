@@ -1,0 +1,40 @@
+{
+    "name": "front-admin",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "build": "nuxt build",
+        "dev": "nuxt dev",
+        "generate": "nuxt generate",
+        "preview": "nuxt preview",
+        "postinstall": "nuxt prepare",
+        "lint": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
+        "lint:fix": "eslint --fix --ext \".js,.vue\" --ignore-path .gitignore .",
+        "format": "prettier --write \"**/*.{js,vue,d.ts}\"",
+        "format:check": "prettier --check \"**/*.{js,vue,d.ts}\""
+    },
+    "dependencies": {
+        "@vee-validate/nuxt": "^4.9.4",
+        "@vee-validate/zod": "^4.9.4",
+        "chart.js": "3.3.2",
+        "eslint-config-custom": "workspace:*",
+        "primeflex": "^3.3.0",
+        "primeicons": "^6.0.1",
+        "primevue": "^3.28.0",
+        "zod": "^3.21.4"
+    },
+    "devDependencies": {
+        "@babel/eslint-parser": "^7.18.9",
+        "dayjs-nuxt": "^1.1.0",
+        "eslint": "^8.30.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-nuxt": "^4.0.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "eslint-plugin-vue": "^9.4.0",
+        "nuxt": "3.3.3",
+        "nuxt-icon": "^0.4.1",
+        "prettier": "2.7.1",
+        "sass": "^1.60.0",
+        "sass-loader": "^10.4.1"
+    }
+}

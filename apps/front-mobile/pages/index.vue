@@ -43,6 +43,7 @@
 
 <script setup>
 import EventCard from '~/components/Events/EventCard.vue'
+
 useHead({
   titleTemplate: '%s - TicketApp'
 })

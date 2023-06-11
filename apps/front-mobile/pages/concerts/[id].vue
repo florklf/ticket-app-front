@@ -8,24 +8,65 @@
       :style="{ 'border-radius': 0 }"
     />
     <div class="container mx-auto">
-      <div class="relative sm:mb-40 md:mb-32">
-        <img v-if="concert" :src="concert?.image" :alt="concert?.name" class="w-full object-cover h-60">
-        <Skeleton v-if="!concert" height="15rem" class="z-0" />
-        <div class="text-3xl font-bold tracking-tight bg-primary text-textonprimary sm:text-4xl inline-block py-10 px-20 w-full sm:w-auto sm:absolute sm:rounded-tr-3xl sm:bottom-[-4em] md:bottom-[-3em]">
-          <h1>{{ concert?.name }}</h1>
-          <span class="text-xl font-normal block mb-8">{{ concert?.type }} - {{ concert?.artist?.name }}</span>
-          <div class="flex font-light text-lg gap-x-12">
-            <div class="flex items-center gap-2">
+      <div class="relative md:mb-36">
+        <img v-if="concert" :src="concert.image" :alt="concert.name" class="w-full object-cover h-60 sm:h-72">
+        <Skeleton v-else height="15rem" class="z-0" />
+        <div class="flex flex-col gap-2 tracking-tight bg-primary text-textonprimary sm:text-4xl inline-block px-14 py-10 w-full md:w-auto md:absolute md:rounded-tr-3xl md:bottom-[-3.5em]">
+          <div v-if="concert" class="flex flex-wrap gap-2">
+            <Chip
+              v-for="eventGenre in concert.eventGenres" :key="eventGenre.id" :pt="{
+                root: { class: 'bg-gradient-to-r from-white to-gray-200' }
+              }"
+            >
+              <template #default>
+                <span class="p-chip-text text-gray-800 text-xs">{{ eventGenre.genre.name }}</span>
+              </template>
+            </Chip>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-3xl font-bold ">
+            <Chip
+              v-if="concert" :pt="{
+                root: { class: 'bg-gradient-to-r from-primarylight to-primary' }
+              }"
+            >
+              <template #default>
+                <span class="p-chip-text text-white text-xs">{{ concert.type }}</span>
+              </template>
+            </Chip>
+            <template v-else>
+              <div class="flex">
+                <Skeleton v-for="i in 2" :key="i" height="1.5rem" width="4rem" class="my-1 mr-2" />
+              </div>
+            </template>
+            <h1 v-if="concert">
+              {{ concert.name }}
+            </h1>
+            <Skeleton v-else height="2rem" width="100%" />
+          </div>
+          <div v-if="concert" class="flex items-center gap-2 text-lg ">
+            <Icon name="ic:outline-group" width="1.5rem" height="1.5rem" />
+            <div class="flex flex-wrap flex-1 items-center gap-1 leading-none">
+              <template v-for="(eventArtist, index) in concert.eventArtists" :key="eventArtist.id">
+                <span>{{ eventArtist.artist.name }} <template v-if="index < concert.eventArtists.length - 1">/</template></span>
+              </template>
+            </div>
+          </div>
+          <template v-else>
+            <Skeleton v-for="i in 2" :key="i" height="1rem" width="16rem" class="my-1" />
+          </template>
+          <div class="flex flex-col font-light text-lg gap-1">
+            <div v-if="concert" class="flex items-center gap-2">
               <Icon name="ic:sharp-place" />
-              <div class="flex flex-col leading-none">
-                <span>{{ concert?.place.name }}</span>
-                <small>{{ concert?.place?.city }}</small>
+              <div class="flex items-center gap-1 leading-none">
+                <span>{{ concert.place.name }}, {{ concert.place.city }}</span>
               </div>
             </div>
-            <div class="flex items-center gap-2">
+            <Skeleton v-else height="1rem" width="10rem" />
+            <div v-if="concert" class="flex items-center gap-2">
               <Icon name="material-symbols:date-range" />
-              <div>{{ dayjs(concert?.date).format('DD/MM/YYYY à HH[h]mm') }}</div>
+              <div>{{ dayjs(concert?.date).format('dddd DD MMMM YYYY, HH:mm') }}</div>
             </div>
+            <Skeleton v-else height="1rem" width="10rem" />
           </div>
         </div>
       </div>
@@ -37,9 +78,20 @@
               <template v-for="i in 4">
                 <Skeleton v-if="!concert" :key="i" class="mb-2" />
               </template>
-              <p class="text-base text-gray-500">
-                {{ concert?.description }}
-              </p>
+              <div v-if="concert" class="flex flex-col gap-3 text-base text-gray-500">
+                <p>
+                  {{ concert?.description }}
+                </p>
+                <p class="flex flex-col">
+                  <span class="font-bold">{{ $t('concert.details.inLineUp') }} :</span>
+                  <span>
+                    <template v-for="(eventArtist, index) in concert?.eventArtists" :key="eventArtist.id">
+                      <span>{{ eventArtist.artist.name }}<template v-if="index < concert.eventArtists.length - 1"> /
+                      </template></span>
+                    </template>
+                  </span>
+                </p>
+              </div>
             </AccordionTab>
             <AccordionTab :header="$t('concert.details.place')">
               <iframe
@@ -76,10 +128,10 @@
               </template>
               <div
                 v-for="eventSeatType in concert?.EventSeatType" :key="eventSeatType.id"
-                class="flex items-center bg-bghighlight text-texthighlight p-4 rounded"
+                class="flex flex-col sm:flex-row justify-center items-center bg-bghighlight text-texthighlight p-4 rounded"
               >
                 <label for="seat-type" class="grow text-xl font-medium">{{ eventSeatType.seatType.name }}</label>
-                <span class="text-xl font-bold mr-4">{{ eventSeatType.price }} €</span>
+                <span class="text-xl font-bold sm:mr-4">{{ eventSeatType.price }} €</span>
                 <InputNumber
                   v-model="(seatsSelection as any)[eventSeatType.id]" input-id="horizontal-buttons"
                   show-buttons button-layout="horizontal" :step="1" :min="0" :max="eventSeatType.available_seats"

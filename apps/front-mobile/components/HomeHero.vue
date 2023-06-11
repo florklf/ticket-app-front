@@ -64,7 +64,7 @@
 <script setup lang="ts">
 import pluralize from 'pluralize'
 
-const images = import.meta.glob('@/assets/images/hero/*.jpg')
+const images = import.meta.glob('@/assets/images/hero/*.jpg', { eager: true, import: 'default' })
 
 const router = useRouter()
 const loaded = ref(false)
@@ -73,7 +73,7 @@ const isSearchingEvents = ref(false)
 const foundEvents = ref<{ results: any[], total: number }>({ results: [], total: 0 })
 
 const MAX_RESULTS = 3
-const HERO_IMAGES = Object.keys(images).map(path => path)
+const HERO_IMAGES = Object.keys(images).map(key => images[key])
 
 const search = async (event: any) => {
   isSearchingEvents.value = true

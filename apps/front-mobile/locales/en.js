@@ -61,6 +61,7 @@ export default {
     },
     details: {
       description: 'Event description',
+      inLineUp: 'In the lineup',
       place: 'Place'
     }
   },

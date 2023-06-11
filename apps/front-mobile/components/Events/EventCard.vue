@@ -10,7 +10,8 @@
           <span class="p-chip-text text-white text-xs">{{ event.type }}</span>
         </template>
       </Chip>
-      <img :src="event.image" class="h-full w-full object-cover object-center sm:h-full sm:w-full">
+      <img v-if="imageLoaded" :src="event.image" class="h-full w-full object-cover object-center sm:h-full sm:w-full">
+      <Skeleton v-else height="100%" width="100%" />
     </div>
     <div class="flex flex-1 flex-col space-y-2 p-4 justify-between">
       <div class="flex flex-col space-y-2">
@@ -37,7 +38,7 @@
           {{ event.place.name }}
         </p>
         <p class="flex items-center gap-1 text-base text-sm italic text-gray-800">
-          <Icon name="fa-solid:calendar" class="text-gray-800" />
+          <Icon name="material-symbols:date-range" class="text-gray-800" />
           {{ dayjs(event?.date).format('DD/MM/YYYY') }}
         </p>
       </div>
@@ -61,6 +62,11 @@ import pluralize from 'pluralize'
 import { Event } from '~/types/Events/Event'
 
 const dayjs = useDayjs()
+
+const imageLoaded = ref(false)
+onMounted(() => {
+  imageLoaded.value = true
+})
 
 const _props = defineProps<{
   event: Event

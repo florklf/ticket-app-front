@@ -61,6 +61,7 @@ export default {
     },
     details: {
       description: 'Description de l\'événement',
+      inLineUp: 'À l\'affiche',
       place: 'Emplacement'
     }
   },

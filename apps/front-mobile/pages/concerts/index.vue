@@ -38,7 +38,7 @@
           </div>
           <Paginator
             @page="handlePageChange" @update:rows="handleRowsChange" :rows="rowsCount"
-            :total-records="parseInt(concertsCount)" :rows-per-page-options="[10, 20, 30]"
+            :total-records="parseInt(concertsCount)" :rows-per-page-options="[12, 24, 48]"
           />
         </div>
       </div>
@@ -54,7 +54,7 @@ useHead({
   titleTemplate: '%s - TicketApp'
 })
 
-const rowsCount = ref(10)
+const rowsCount = ref(12)
 const page = ref(0)
 const selectedGenre = ref(null)
 const items = ref([

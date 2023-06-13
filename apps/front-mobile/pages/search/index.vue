@@ -36,7 +36,7 @@
           </div>
           <Paginator
             @page="handlePageChange" @update:rows="handleRowsChange" :rows="pagination.rowsCount"
-            :total-records="parseInt(foundEventsIds.total)" :rows-per-page-options="[10, 20, 30]"
+            :total-records="parseInt(foundEventsIds.total)" :rows-per-page-options="[12, 24, 48]"
           />
         </div>
       </div>
@@ -60,7 +60,7 @@ const items = ref([
 ])
 const pagination = ref({
   page: 0,
-  rowsCount: 10
+  rowsCount: 12
 })
 
 const { data: foundEventsIds } = await useCustomFetch('/search', {

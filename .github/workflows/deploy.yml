@@ -1,0 +1,60 @@
+on:
+  push:
+    branches: [ main ]
+
+name: 🚧 Build & Push to Docker Hub
+jobs:
+  push_to_registry:
+    name: 🚀 Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - dockerfile: ./apps/front-mobile/Dockerfile
+            image: foopy7774/front-mobile
+          - dockerfile: ./apps/front-admin/Dockerfile
+            image: foopy7774/front-admin
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      
+      - name: 🏗 Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ matrix.image }}
+      
+      - name: 🚧 Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: "${{ matrix.image }}:latest"
+          labels: ${{ steps.meta.outputs.labels }}
+  deploy:
+      name: 🚀 Deploy to Virtual Machine
+      runs-on: ubuntu-latest
+      needs: push_to_registry
+      steps:
+        - name: Pull image and run container 
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.SSH_HOST }}
+            port: ${{ secrets.SSH_PORT }}
+            username: ${{ secrets.SSH_USERNAME }}
+            key: ${{ secrets.SSH_KEY }}
+            script: |
+              docker pull foopy7774/front-mobile:latest
+              docker pull foopy7774/front-admin:latest
+              docker stop front-mobile front-admin
+              docker network rm ticket-app
+              docker network create ticket-app
+              docker run --rm -d --name front-mobile --network ticket-app -p 4001:4001 -e PORT=4001 -e NUXT_PUBLIC_API_BASE="${{ secrets.PUBLIC_API_BASE }}" -e NUXT_PUBLIC_GOOGLE_API_KEY=${{ secrets.PUBLIC_GOOGLE_API_KEY }} foopy7774/front-mobile:latest
+              docker run --rm -d --name front-admin --network ticket-app -p 4002:4002 -e PORT=4002 -e NUXT_APP_BASE_URL="/admin/" -e NUXT_PUBLIC_API_BASE="${{ secrets.PUBLIC_API_BASE }}" foopy7774/front-admin:latest

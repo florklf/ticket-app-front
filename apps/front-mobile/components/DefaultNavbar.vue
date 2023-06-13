@@ -91,7 +91,7 @@ const getCountryFlag = (lang: string) => {
   return String.fromCodePoint(...[...lang.toUpperCase()].map(char => char.charCodeAt(0) + 127397))
 }
 
-const locales: ILocale[] = availableLocales.map(locale => ({
+const locales: ILocale[] = (availableLocales as string[]).map(locale => ({
   label: getCountryFlag(locale),
   value: locale
 }))

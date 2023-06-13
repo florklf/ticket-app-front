@@ -195,7 +195,7 @@ const seatsSelection = reactive({})
 const config = useRuntimeConfig()
 const { status, data } = useAuth()
 const { data: concert } = await useCustomFetch<Concert>(`/events/${route.params.id}`)
-const i18n = useI18n()
+const i18n = useI18n({ useScope: 'global' })
 
 const items = ref([
   { label: i18n.t('concert.title'), to: constantPath.CONCERTS_PAGE },

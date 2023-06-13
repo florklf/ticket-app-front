@@ -52,7 +52,7 @@ useHead({
 })
 
 const route = useRoute()
-const i18n = useI18n()
+const i18n = useI18n({ useScope: 'global' })
 
 const query = ref(route.query.q ?? '')
 const items = ref([

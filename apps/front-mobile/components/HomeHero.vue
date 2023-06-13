@@ -13,6 +13,7 @@
     <Skeleton v-else border-radius="0" height="13rem" class="sm:min-h-[20rem] md:min-h-[30rem] lg:min-h-[35rem]" />
     <div class="flex flex-col items-center absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-full p-6 sm:w-4/5 sm:p-0">
       <i18n-t
+        scope="global"
         tag="h1" keypath="home.hero.heading"
         class="text-white text-center text-3xl font-bold select-none leading-6 sm:text-5xl sm:leading-10 md:text-6xl md:leading-11 lg:text-8xl lg:leading-18"
       >

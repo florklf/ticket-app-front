@@ -8,6 +8,7 @@
       <div class="bg-white">
         <div class="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:max-w-7xl">
           <i18n-t
+            scope="global"
             tag="h2" keypath="home.events.title"
             class="text-2xl font-bold leading-7 sm:truncate sm:text-3xl sm:tracking-tight mb-4"
           >
@@ -52,7 +53,6 @@ const rowsCount = 4
 
 const url = computed(() => `/events?limit=${rowsCount}`)
 const { data: events, pending } = await useCustomFetch(url.value, {
-  params: { limit: rowsCount },
-  watch: [rowsCount]
+  params: { limit: rowsCount }
 })
 </script>

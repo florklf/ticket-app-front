@@ -63,7 +63,7 @@ export default defineNuxtConfig({
   ],
 
   build: {
-    transpile: ['primevue']
+    transpile: ['primevue', '@vee-validate/rules']
   },
 
   devServer: {

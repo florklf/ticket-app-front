@@ -167,7 +167,7 @@
 <script setup>
 import { useToast } from 'primevue/usetoast'
 
-const i18n = useI18n()
+const i18n = useI18n({ useScope: 'global' })
 const config = useRuntimeConfig()
 const expandedRows = ref([])
 const orderItems = reactive({})

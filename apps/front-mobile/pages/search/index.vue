@@ -15,10 +15,10 @@
               {{ $t('search.title', { query: query }) }}
             </h2>
             <span class="text-lg">
-              {{ $t('search.resultsCount', { count: foundEvents.total }) }}
+              {{ $t('search.resultsCount', { count: foundEventsIds.total }) }}
             </span>
           </div>
-          <div v-if="!foundEvents?.results.length" class="flex justify-center my-8">
+          <div v-if="foundEventsIds.total == 0" class="flex justify-center my-8">
             <p class="text-gray-500">
               {{ $t('search.noResults') }}
             </p>
@@ -28,15 +28,15 @@
             class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 md:grid-cols-3 md:gap-x-6 md:gap-y-10 lg:grid-cols-4 lg:gap-x-8"
           >
             <div
-              v-for="event in foundEvents.results" :key="event.id"
+              v-for="event in events" :key="event.id"
               class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white"
             >
               <EventCard :event="event" />
             </div>
           </div>
           <Paginator
-            @page="handlePageChange" @update:rows="handleRowsChange" :rows="pagination.size"
-            :total-records="parseInt(!foundEvents ? 0 : foundEvents.total)" :rows-per-page-options="[10, 20, 30]"
+            @page="handlePageChange" @update:rows="handleRowsChange" :rows="pagination.rowsCount"
+            :total-records="parseInt(foundEventsIds.total)" :rows-per-page-options="[10, 20, 30]"
           />
         </div>
       </div>
@@ -60,19 +60,31 @@ const items = ref([
 ])
 const pagination = ref({
   page: 0,
-  size: 10
+  rowsCount: 10
 })
 
-const requestBody = computed(() => ({
-  query: query.value,
-  page: pagination.value.page,
-  size: pagination.value.size
-}))
-
-const { data: foundEvents } = await useCustomFetch('/search', {
+const { data: foundEventsIds } = await useCustomFetch('/search', {
   method: 'POST',
-  body: requestBody,
-  watch: [query, pagination]
+  body: {
+    query: query.value
+  }
+})
+
+const eventsBody = computed(() => {
+  const body = {
+    ids: foundEventsIds.value.results
+  }
+  return body
+})
+const eventsParams = computed(() => {
+  const params = { page: pagination.value.page, limit: pagination.value.rowsCount }
+  return params
+})
+const { data: events } = await useCustomFetch('/events/ids', {
+  method: 'POST',
+  params: eventsParams,
+  body: eventsBody,
+  watch: [pagination]
 })
 
 const handlePageChange = (event) => {
@@ -80,6 +92,6 @@ const handlePageChange = (event) => {
 }
 
 const handleRowsChange = (value) => {
-  pagination.value.size = value
+  pagination.value.rowsCount = value
 }
 </script>

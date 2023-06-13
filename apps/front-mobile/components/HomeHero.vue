@@ -24,13 +24,12 @@
       </i18n-t>
       <div class="flex justify-start mt-6 w-full p-input-icon-left">
         <AutoComplete
-          v-model="query" @complete="search" @item-select="onItemSelect" @keyup.enter="() => (query && foundEvents.total === 0) && $router.push({ path: '/search', query: { q: query } })"
-          class="p-input-icon-left w-full"
-          option-label="name"
-          data-key="id" complete-on-focus :suggestions="foundEvents.results" :min-length="3" scroll-height="200"
-          :placeholder="$t('home.hero.searchPlaceholder')" :pt="{ input: { class: 'flex-1' } }"
-          :empty-search-message="$t('home.hero.emptySearchMessage')"
-          :search-message="$t('home.hero.searchResultsCount', { count: foundEvents.total })"
+          v-model="query" @complete="search" @item-select="onItemSelect"
+          @keyup.enter="() => (query && foundEventsIds.total === 0) && $router.push({ path: '/search', query: { q: query } })"
+          class="p-input-icon-left w-full" option-label="name" data-key="id" complete-on-focus :suggestions="foundEvents"
+          :min-length="3" scroll-height="200" :placeholder="$t('home.hero.searchPlaceholder')"
+          :pt="{ input: { class: 'flex-1' } }" :empty-search-message="$t('home.hero.emptySearchMessage')"
+          :search-message="$t('home.hero.searchResultsCount', { count: foundEventsIds.total })"
         >
           <template #header>
             <div class="flex items-center justify-between px-3 pt-3">
@@ -38,14 +37,14 @@
                 {{ $t('home.hero.searchResults') }}
               </span>
               <span class="text-sm text-primary font-semibold">
-                {{ $t('home.hero.searchResultsCount', { count: foundEvents.total }) }}
+                {{ $t('home.hero.searchResultsCount', { count: foundEventsIds.total }) }}
               </span>
             </div>
           </template>
           <template #footer>
             <div class="flex items-center justify-start px-3 pb-3 bg-grey">
               <NuxtLink class="text-sm text-primary" :to="{ name: 'search', query: { q: query } }">
-                <template v-if="foundEvents.total > MAX_RESULTS">
+                <template v-if="foundEventsIds.total > MAX_RESULTS">
                   {{ $t('home.hero.searchResultsMore') }}
                 </template>
                 <template v-else>
@@ -70,14 +69,15 @@ const router = useRouter()
 const loaded = ref(false)
 const query = ref()
 const isSearchingEvents = ref(false)
-const foundEvents = ref<{ results: any[], total: number }>({ results: [], total: 0 })
+const foundEvents = ref()
+const foundEventsIds = ref<{ results: number[], total: number }>({ results: [], total: 0 })
 
 const MAX_RESULTS = 3
 const HERO_IMAGES = Object.keys(images).map(key => images[key])
 
 const search = async (event: any) => {
   isSearchingEvents.value = true
-  const { data: foundEventsData }: any = await useCustomFetch('/search', {
+  const { data }: any = await useCustomFetch('/search', {
     method: 'POST',
     body: JSON.stringify({
       query: event.query,
@@ -85,7 +85,18 @@ const search = async (event: any) => {
       page: 0
     })
   })
-  foundEvents.value = foundEventsData.value
+  foundEventsIds.value = data.value
+  const eventsBody = computed(() => {
+    const body = {
+      ids: foundEventsIds.value.results
+    }
+    return body
+  })
+  const { data: events } = await useCustomFetch('/events/ids', {
+    method: 'POST',
+    body: eventsBody
+  })
+  foundEvents.value = events.value
   isSearchingEvents.value = false
 }
 

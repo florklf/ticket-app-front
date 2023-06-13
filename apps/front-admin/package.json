@@ -25,6 +25,7 @@
     },
     "devDependencies": {
         "@babel/eslint-parser": "^7.18.9",
+        "@nuxt/devtools": "^0.5.5",
         "dayjs-nuxt": "^1.1.0",
         "eslint": "^8.30.0",
         "eslint-config-prettier": "^8.5.0",

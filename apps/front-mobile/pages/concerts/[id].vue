@@ -226,7 +226,7 @@ const addToCart = async () => {
         name: concert.value?.EventSeatType.find(type => type.id === +id)?.seatType.name,
         price: concert.value?.EventSeatType.find(type => type.id === +id)?.price,
         quantity,
-        url: `${config.public.localExposedApiUrl}/events/seat-types/${id}`,
+        url: `${config.public.apiBase}/events/seat-types/${id}`,
         customFields: [
           { name: 'event_name', value: concert.value?.name, type: 'string' },
           { name: 'event_type', value: concert.value?.type, type: 'string' },

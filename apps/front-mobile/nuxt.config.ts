@@ -74,7 +74,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase: '',
-      localExposedApiUrl: '',
       googleApiKey: ''
     }
   },

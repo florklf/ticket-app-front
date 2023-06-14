@@ -9,7 +9,10 @@ const model = ref([
   {
     label: 'Gestion',
     items: [
-      { label: 'Evenements', icon: 'pi pi-fw pi-calendar', to: '/events' }
+      { label: 'Evenements', icon: 'pi pi-fw pi-calendar', to: '/events' },
+      { label: 'Lieux', icon: 'pi pi-fw pi-map-marker', to: '/places' },
+      { label: 'Categories', icon: 'pi pi-fw pi-tags', to: '/categories' },
+      { label: 'Utilisateurs', icon: 'pi pi-fw pi-users', to: '/users' }
     ]
   }
 ])

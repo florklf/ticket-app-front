@@ -6,7 +6,16 @@ import { Place } from '~/types/Places/Place'
 import { SeatType } from '~/types/Places/SeatType'
 
 const { data: places, refresh } = await useCustomFetch<Place[]>('/places')
-console.info(places.value)
+
+const placesTable = computed(() => {
+  return places.value.map((place) => {
+    return {
+      ...place,
+      capacity: place.seatTypes.reduce((acc, val) => acc + val.capacity, 0),
+      fullAddress: `${place.address}, ${place.zip} ${place.city}`
+    }
+  })
+})
 const toast = useToast()
 const loading = ref(null)
 const place: Ref<Partial<Place>> = ref({})
@@ -23,7 +32,7 @@ const initFilters = () => {
   filters.value = {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-    address: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    fullAddress: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
     capacity: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.GREATER_THAN_OR_EQUAL_TO }] }
   }
 }
@@ -89,13 +98,13 @@ const savePlace = async () => {
           description: place.value.description,
           address: place.value.address,
           zip: place.value.zip,
-          city: place.value.city,
+          city: place.value.city
         },
         key: 'place'
       })
       toast.add({
         severity: 'success',
-        summary: 'Successful',
+        summary: 'Succès',
         detail: 'Evenement modifié',
         life: 3000
       })
@@ -109,7 +118,7 @@ const savePlace = async () => {
       })
       toast.add({
         severity: 'success',
-        summary: 'Successful',
+        summary: 'Succès',
         detail: 'Evenement créé',
         life: 3000
       })
@@ -173,14 +182,14 @@ const deletePlace = async () => {
     place.value = {}
     toast.add({
       severity: 'success',
-      summary: 'Successful',
+      summary: 'Succès',
       detail: 'Lieu supprimé',
       life: 3000
     })
-  } else if (error.value.statusCode === 400) {
+  } else {
     toast.add({
       severity: 'error',
-      summary: 'Error',
+      summary: 'Erreur',
       detail: 'Impossible de supprimer un lieu lié à des évènements',
       life: 3000
     })
@@ -198,10 +207,10 @@ const deleteSeatType = async () => {
       detail: 'Type de lieu supprimé',
       life: 3000
     })
-  } else if (error.value.statusCode === 400) {
+  } else {
     toast.add({
       severity: 'error',
-      summary: 'Error',
+      summary: 'Erreur',
       detail: 'Impossible de supprimer un type de place lié à un évènement',
       life: 3000
     })
@@ -225,7 +234,7 @@ const deleteSeatType = async () => {
         <DataTable
           v-model:expandedRows="expandedRows"
           v-model:filters="filters"
-          :value="places"
+          :value="placesTable"
           :paginator="true"
           class="p-datatable-gridlines"
           :rows="10"
@@ -234,7 +243,7 @@ const deleteSeatType = async () => {
           filter-display="menu"
           :loading="loading"
           responsive-layout="scroll"
-          :global-filter-fields="['name', 'address', 'capacity']"
+          :global-filter-fields="['name', 'fullAddress', 'capacity']"
         >
           <template #header>
             <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
@@ -262,7 +271,7 @@ const deleteSeatType = async () => {
               <InputText v-model="filterModel.value" @input="filterCallback()" type="text" class="p-column-filter" placeholder="Search by name" />
             </template>
           </Column>
-          <Column sortable field="address" header="Place" style="min-width: 12rem">
+          <Column sortable sort-field="fullAddress" filter-field="fullAddress" header="Place" style="min-width: 12rem">
             <template #filter="{ filterModel, filterCallback }">
               <InputText v-model="filterModel.value" @input="filterCallback()" type="text" class="p-column-filter" placeholder="Search by address" />
             </template>
@@ -346,8 +355,10 @@ const deleteSeatType = async () => {
             </div>
             <div class="field col">
               <label class="mb-3">Code postal</label>
-              <!-- <InputText id="name" type="number" v-model.trim="place.zip" required="true" autofocus :class="{ 'p-invalid': submitted && !place.zip }" /> -->
-              <InputMask id="name" v-model.trim="place.zip" required="true" autofocus :class="{ 'p-invalid': submitted && !place.zip }" mask="99999" placeholder="" />
+              <InputMask
+                id="name" v-model.trim="place.zip" required="true" autofocus :class="{ 'p-invalid': submitted && !place.zip }"
+                mask="99999" placeholder=""
+              />
             </div>
           </div>
           <span v-if="place.id" class="mt-3">Capacité maximale: <span class="font-bold">{{ place.seatTypes.reduce((total, seatType) => total + seatType.capacity, 0) }}</span></span>
@@ -380,7 +391,7 @@ const deleteSeatType = async () => {
         <Dialog v-model:visible="deletePlaceDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
           <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-            <span v-if="place">ê <b>{{ place.name }}</b>?</span>
+            <span v-if="place">Êtes-vous sûr de vouloir supprimer <b>{{ place.name }}</b>?</span>
           </div>
           <template #footer>
             <Button @click="deletePlaceDialog = false" label="No" icon="pi pi-times" class="p-button-text" />

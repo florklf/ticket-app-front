@@ -10,7 +10,8 @@ export default defineNuxtConfig({
       }
     ],
     'dayjs-nuxt',
-    '@nuxtjs/i18n'
+    '@nuxtjs/i18n',
+    '@nuxt/devtools'
   ],
   app: {
     head: {

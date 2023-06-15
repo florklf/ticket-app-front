@@ -6,6 +6,17 @@ import { EnumEventType } from '~/types/EnumEventType'
 import { EnumEventStatus } from '~/types/EnumEventStatus'
 import { Event } from '~/types/Events/Event'
 import { Place } from '~/types/Events/Place'
+import { SeatType } from '~/types/Events/SeatType'
+
+interface EventSeatType {
+    id: number;
+    price: number;
+    available_seats: number;
+    event_id: number;
+    seat_type_id: number;
+    assignedAt: string;
+    seatType: SeatType;
+}
 
 const { data: events, refresh } = await useCustomFetch<Event[]>('/events', { key: 'events' })
 const { data: places } = await useCustomFetch<Place[]>('/places')
@@ -14,14 +25,20 @@ const dayjs = useDayjs()
 const loading = ref(null)
 const selectedEvents = ref()
 const event: Ref<Partial<Event>> = ref({})
+const eventSeatType: Ref<Partial<EventSeatType>> = ref({})
+const selectedSeatType: Ref<Partial<SeatType>> = ref({})
+const expandedEvent: Ref<Partial<Event>> = ref({})
 const eventDialog = ref(false)
+const eventSeatTypeDialog = ref(false)
 const deleteEventDialog = ref(false)
+const deleteEventSeatTypeDialog = ref(false)
 const deleteEventsDialog = ref(false)
 const submitted = ref(false)
 const eventImage = ref()
 const eventTypes = ref(Object.values(EnumEventType))
 const eventStatuses = ref(Object.values(EnumEventStatus))
 const filters = ref()
+const expandedRows = ref([])
 
 const getEventsStatuses = () => {
   events.value.forEach((event) => {
@@ -85,19 +102,27 @@ const openNew = () => {
   eventDialog.value = true
 }
 
+const openNewEventSeatType = (event) => {
+  expandedEvent.value = event
+  eventSeatType.value = {}
+  submitted.value = false
+  eventSeatTypeDialog.value = true
+}
+
 const hideDialog = () => {
   eventDialog.value = false
   submitted.value = false
 }
 
+const hideEventSeatTypeDialog = () => {
+  eventSeatTypeDialog.value = false
+  submitted.value = false
+}
+
 const saveEvent = async () => {
   submitted.value = true
-  console.info(event.value)
-  console.info(eventImage.value)
   if (event.value.name && event.value.name.trim()) {
     if (event.value.id) {
-      // event.value.inventoryStatus = event.value.inventoryStatus.value ? event.value.inventoryStatus.value : event.value.inventoryStatus
-      // events.value[findIndexById(event.value.id)] = event.value
       const { data: updatedEvent } = await useCustomFetch<Event>(`/events/${event.value.id}`, {
         method: 'PATCH',
         body: {
@@ -153,6 +178,64 @@ const saveEvent = async () => {
   }
 }
 
+const saveEventSeatType = async () => {
+  submitted.value = true
+  console.info(eventSeatType.value)
+  console.info(selectedSeatType.value)
+  console.info(event.value)
+  if (eventSeatType.value.price && eventSeatType.value.price > 0) {
+    if (eventSeatType.value.id) {
+      await useCustomFetch<EventSeatType>(`/events/seat-types/${eventSeatType.value.id}`, {
+        method: 'PATCH',
+        body: {
+          price: eventSeatType.value.price,
+          available_seats: eventSeatType.value.available_seats,
+          seatType: {
+            connect: {
+              id: eventSeatType.value.seatType.id
+            }
+          }
+        },
+        key: 'eventSeatType'
+      })
+      toast.add({
+        severity: 'success',
+        summary: 'Successful',
+        detail: 'Type de place modifié',
+        life: 3000
+      })
+    } else {
+      await useCustomFetch<EventSeatType>('/events/seat-types', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...eventSeatType.value,
+          available_seats: selectedSeatType.value.capacity,
+          seatType: {
+            connect: {
+              id: selectedSeatType.value.id
+            }
+          },
+          event: {
+            connect: {
+              id: expandedEvent.value.id
+            }
+          }
+        }),
+        key: 'eventSeatType'
+      })
+      toast.add({
+        severity: 'success',
+        summary: 'Successful',
+        detail: 'Type de place créé',
+        life: 3000
+      })
+    }
+    refresh()
+    eventSeatTypeDialog.value = false
+    eventSeatType.value = {}
+  }
+}
+
 const uploadImage = async (event) => {
   const formdata = new FormData()
   formdata.append('file', eventImage.value)
@@ -168,9 +251,19 @@ const editEvent = (editEvent) => {
   eventDialog.value = true
 }
 
+const editEventSeatType = (editEventSeatType) => {
+  eventSeatType.value = { ...editEventSeatType }
+  eventSeatTypeDialog.value = true
+}
+
 const confirmDeleteEvent = (editEvent) => {
   event.value = editEvent
   deleteEventDialog.value = true
+}
+
+const confirmDeleteEventSeatType = (editEventSeatType) => {
+  eventSeatType.value = editEventSeatType
+  deleteEventSeatTypeDialog.value = true
 }
 
 const deleteEvent = async () => {
@@ -195,6 +288,31 @@ const deleteEvent = async () => {
     })
   }
 }
+
+const deleteEventSeatType = async () => {
+  const { error } = await useCustomFetch<Event>(`/events/seat-types/${eventSeatType.value.id}`, { method: 'DELETE', key: 'deleteEventSeatType' })
+  console.info(error)
+  if (!error.value) {
+    events.value = events.value.filter(val => val.id !== eventSeatType.value.id)
+    deleteEventSeatTypeDialog.value = false
+    eventSeatType.value = {}
+    toast.add({
+      severity: 'success',
+      summary: 'Successful',
+      detail: 'Event Deleted',
+      life: 3000
+    })
+  } else if (error.value.statusCode === 400) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Impossible de supprimer un évènement lié à des réservations ou des types de places',
+      life: 3000
+    })
+  }
+  refresh()
+}
+
 const confirmDeleteSelected = () => {
   deleteEventsDialog.value = true
 }
@@ -239,6 +357,7 @@ const onFileChange = (event) => {
           </template>
         </Toolbar>
         <DataTable
+          v-model:expandedRows="expandedRows"
           v-model:filters="filters"
           :value="events"
           :paginator="true"
@@ -271,6 +390,7 @@ const onFileChange = (event) => {
           <template #loading>
             Loading events data. Please wait.
           </template>
+          <Column expander style="width: 5rem" />
           <Column sortable field="name" header="Name" style="min-width: 12rem">
             <template #body="{ data }">
               <img :alt="data.type" :src="data.image" class="shadow-2 border-round" width="32" style="vertical-align: middle">
@@ -373,9 +493,77 @@ const onFileChange = (event) => {
           <Column header-style="min-width:10rem;">
             <template #body="slotProps">
               <Button @click="editEvent(slotProps.data)" icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" />
-              <Button @click="confirmDeleteEvent(slotProps.data)" icon="pi pi-trash" class="p-button-rounded p-button-warning mt-2" />
+              <Button
+                @click="confirmDeleteEvent(slotProps.data)" icon="pi pi-trash" class="p-button-rounded p-button-warning mt-2"
+                :disabled="slotProps.data.EventSeatType.some(eventSeatType => eventSeatType.available_seats !== eventSeatType.seatType.capacity)"
+              />
             </template>
           </Column>
+
+          <template #expansion="slotProps">
+            <div class="p-3">
+              <div class="flex justify-content-between align-items-center">
+                <h5 class="m-0">
+                  Types de place pour {{ slotProps.data?.name }}
+                </h5>
+                <div class="my-2">
+                  <Dropdown
+                    v-model="selectedSeatType"
+                    @change="openNewEventSeatType(slotProps.data)" :options="slotProps.data.place.seatTypes.filter(seatType => !(slotProps.data.EventSeatType.map(eventSeatType => eventSeatType.seat_type_id)).includes(seatType.id))"
+                    option-label="name" placeholder="Nouveau" :disabled="!slotProps.data.place.seatTypes.some(seatType => !(slotProps.data.EventSeatType.map(eventSeatType => eventSeatType.seat_type_id)).includes(seatType.id))"
+                    class="w-full bg-primary text-white"
+                  >
+                    <template #value>
+                      <span class="text-white font-bold">Nouveau</span>
+                    </template>
+                    <template #dropdownicon>
+                      <i class="pi pi-plus text-white" />
+                    </template>
+                  </Dropdown>
+                </div>
+              </div>
+              <DataTable :value="slotProps.data.EventSeatType">
+                <Column field="id" header="Id" sortable />
+                <Column field="seatType.name" header="Nom" sortable />
+                <Column field="available_seats" header="Places disponibles" sortable />
+                <Column field="amount" header="Amount" sortable>
+                  <template #body="slotProps">
+                    {{ slotProps.data.price.toLocaleString() }} €
+                  </template>
+                </Column>
+                <Column field="available_seats" header="Places disponibles" :show-filter-match-modes="false" style="min-width: 12rem">
+                  <template #body="{ data }">
+                    <ClientOnly>
+                      <span class="block mx-auto text-right text-sm font-bold">{{ data.available_seats.toLocaleString() }}</span>
+                      <ProgressBar
+                        :value="(data.available_seats / data.seatType?.capacity) * 100"
+                        :show-value="false" style="height: 0.5rem"
+                      />
+                      <template #fallback>
+                        Loading progress bar...
+                      </template>
+                    </ClientOnly>
+                  </template>
+                  <template #filter="{ filterModel }">
+                    <Slider v-model="filterModel.value" :range="true" class="m-3" />
+                    <div class="flex align-items-center justify-content-between px-2">
+                      <span>{{ filterModel.value ? filterModel.value[0] : 0 }}</span>
+                      <span>{{ filterModel.value ? filterModel.value[1] : 100 }}</span>
+                    </div>
+                  </template>
+                </Column>
+                <Column header-style="min-width:10rem;">
+                  <template #body="slotProps">
+                    <Button @click="editEventSeatType(slotProps.data)" icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" />
+                    <Button
+                      @click="confirmDeleteEventSeatType(slotProps.data)" icon="pi pi-trash" class="p-button-rounded p-button-warning mt-2"
+                      :disabled="slotProps.data.available_seats !== slotProps.data.seatType.capacity"
+                    />
+                  </template>
+                </Column>
+              </DataTable>
+            </div>
+          </template>
         </DataTable>
 
         <Dialog v-model:visible="eventDialog" :style="{ width: '450px' }" header="Détails de l'évènement" :modal="true" class="p-fluid">
@@ -413,7 +601,7 @@ const onFileChange = (event) => {
               <label class="mb-3">Lieu de l'évènement</label>
               <Dropdown
                 v-model="event.place"
-                @change="console.info(event); console.info()" :options="places" filter option-label="name"
+                :disabled="event.EventSeatType?.some(eventSeat => eventSeat.available_seats < eventSeat.seatType.capacity)" :options="places" filter option-label="name"
                 placeholder="Sélectionner un lieu" class="w-full md:w-14rem"
               >
                 <template #value="slotProps">
@@ -430,15 +618,37 @@ const onFileChange = (event) => {
                   </div>
                 </template>
               </Dropdown>
+              <small>Impossible de modifier le lieu une fois la vente démarrée</small>
             </div>
             <div class="field col">
               <label class="mb-3">Date</label>
-              <Calendar v-model="event.date" show-time hour-format="24" />
+              <Calendar v-model="event.date" show-time hour-format="24" :min="Date.now()" />
             </div>
           </div>
           <template #footer>
             <Button @click="hideDialog" label="Cancel" icon="pi pi-times" class="p-button-text" />
             <Button @click="saveEvent" label="Save" icon="pi pi-check" class="p-button-text" />
+          </template>
+        </Dialog>
+
+        <Dialog v-model:visible="eventSeatTypeDialog" :style="{ width: '450px' }" :header="`Détails du type de place - ${eventSeatType.seatType?.name ?? selectedSeatType.name}`" :modal="true" class="p-fluid">
+          <img v-if="event?.image" :src="event?.image" :alt="event?.image" width="150" class="mt-0 mx-auto mb-5 block shadow-2">
+          <div class="field">
+            <label class="font-bold">Description</label>
+            <p>{{ eventSeatType.seatType?.description ?? selectedSeatType.description }}</p>
+          </div>
+          <div class="field">
+            <label class="font-bold">Capacité maximale</label>
+            <p>{{ eventSeatType.seatType?.capacity ?? selectedSeatType.capacity }}</p>
+          </div>
+          <div class="field">
+            <label for="name">Prix</label>
+            <InputNumber id="name" v-model.trim="eventSeatType.price" required="true" autofocus :class="{ 'p-invalid': submitted && !eventSeatType.price }" />
+            <small v-if="submitted && !eventSeatType.seatType?.name" class="p-invalid">Le prix est requis.</small>
+          </div>
+          <template #footer>
+            <Button @click="hideEventSeatTypeDialog" label="Cancel" icon="pi pi-times" class="p-button-text" />
+            <Button @click="saveEventSeatType" label="Save" icon="pi pi-check" class="p-button-text" />
           </template>
         </Dialog>
 
@@ -450,6 +660,17 @@ const onFileChange = (event) => {
           <template #footer>
             <Button @click="deleteEventDialog = false" label="No" icon="pi pi-times" class="p-button-text" />
             <Button @click="deleteEvent" label="Yes" icon="pi pi-check" class="p-button-text" />
+          </template>
+        </Dialog>
+
+        <Dialog v-model:visible="deleteEventSeatTypeDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
+          <div class="flex align-items-center justify-content-center">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+            <span v-if="event">Are you sure you want to delete <b>{{ eventSeatType.seatType.name }}</b>?</span>
+          </div>
+          <template #footer>
+            <Button @click="deleteEventSeatTypeDialog = false" label="No" icon="pi pi-times" class="p-button-text" />
+            <Button @click="deleteEventSeatType" label="Yes" icon="pi pi-check" class="p-button-text" />
           </template>
         </Dialog>
 

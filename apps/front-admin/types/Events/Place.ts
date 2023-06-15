@@ -1,3 +1,5 @@
+import { SeatType } from './SeatType'
+
 export interface Place {
     id: number;
     name: string;
@@ -6,4 +8,5 @@ export interface Place {
     address: string;
     city: string;
     zip: string;
+    seatTypes: SeatType[];
 }

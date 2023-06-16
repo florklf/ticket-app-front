@@ -1,14 +1,14 @@
-import { EnumEventType } from '../EnumEventType'
 import { EventArtist } from './EventArtist'
 import { EventGenre } from './EventGenre'
 import { EventSeatType } from './EventSeatType'
 import { Place } from './Place'
+import { Type } from './Type'
 
 export interface Event {
     id: number;
     name: string;
     description: string;
-    type: EnumEventType;
+    type: Type;
     date: string;
     image: string;
     place_id: number;

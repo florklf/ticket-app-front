@@ -110,7 +110,7 @@
               />
               <Skeleton v-if="!orderEvent.place" height="16rem" />
             </div>
-            <div class="flex flex-col sm:items-end sm:justify-end">
+            <div v-if="orderPayment" class="flex flex-col sm:items-end sm:justify-end">
               <div class="flex items-center">
                 <span class="font-bold">{{ $t('dashboard.order.orderList.payment.paymentMethod') }}:</span>
                 <span class="ml-2">{{ orderPayment.payment_method }}</span>
@@ -121,7 +121,7 @@
               </div>
               <div class="flex items-center">
                 <span class="font-bold">{{ $t('dashboard.order.orderList.payment.cardNumber') }}:</span>
-                <img :src="`https://logo.clearbit.com/${orderPayment.card_type}.com`" class="ml-2" width="30" height="30">
+                <img v-if="orderPayment.card_type" :src="`https://logo.clearbit.com/${orderPayment.card_type}.com`" class="ml-2" width="30" height="30">
                 <span class="ml-2">••••&nbsp; ••••&nbsp; ••••&nbsp; {{ orderPayment.card_last4 }}</span>
               </div>
               <div class="flex items-center">
@@ -178,7 +178,7 @@ const modalQrCodes = ref(null)
 const toast = useToast()
 const locale = ref(i18n.locale.value === 'fr' ? 'fr-FR' : 'en-US')
 
-const { data: ordersData, error } = await useCustomFetch('/orders')
+const { data: ordersData, error, pending } = await useCustomFetch('/orders')
 if (error.value) {
   toast.add({
     severity: 'error',

@@ -2,6 +2,9 @@ export default {
   navbar: {
     home: 'Accueil',
     concert: 'Concerts',
+    spectacles: 'Spectacles',
+    festivals: 'Festivals',
+    conferences: 'Conférences',
     signin: 'Je me connecte',
     signout: 'Je me déconnecte',
     dashboard: 'Dashboard',
@@ -53,6 +56,27 @@ export default {
   },
   concert: {
     title: 'Concerts',
+    reservation: {
+      title: 'Sélectionnez vos places',
+      seeCategories: 'Quelle catégorie devrais-je choisir ?',
+      addToCart: 'Ajouter au panier',
+      addToCartNotConnected: 'Vous devez être connecté pour ajouter des places à votre panier.',
+      modalAvailableSeatType: 'Catégories de places disponibles'
+    },
+    details: {
+      description: 'Description de l\'événement',
+      inLineUp: 'À l\'affiche',
+      place: 'Emplacement'
+    }
+  },
+
+  event: {
+    title: {
+      concerts: 'Concerts',
+      spectacles: 'Spectacles',
+      festivals: 'Festivals',
+      conferences: 'Conférences'
+    },
     reservation: {
       title: 'Sélectionnez vos places',
       seeCategories: 'Quelle catégorie devrais-je choisir ?',

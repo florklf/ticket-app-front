@@ -72,6 +72,30 @@
                 {{ $t('navbar.concert') }}
               </NuxtLink>
             </li>
+            <li>
+              <NuxtLink
+                :to="constantPath.SPECTACLES_PAGE"
+                class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0"
+              >
+                {{ $t('navbar.spectacles') }}
+              </NuxtLink>
+            </li>
+            <li>
+              <NuxtLink
+                :to="constantPath.FESTIVALS_PAGE"
+                class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0"
+              >
+                {{ $t('navbar.festivals') }}
+              </NuxtLink>
+            </li>
+            <li>
+              <NuxtLink
+                :to="constantPath.CONFERENCES_PAGE"
+                class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0"
+              >
+                {{ $t('navbar.conferences') }}
+              </NuxtLink>
+            </li>
             <li class="lg:hidden">
               <NuxtLink class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 snipcart-checkout">
                 {{ $t('navbar.cart') }}

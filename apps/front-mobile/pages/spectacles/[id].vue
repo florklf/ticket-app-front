@@ -1,7 +1,7 @@
 <template>
   <div>
     <Head>
-      <Title>{{ concert?.name }}</Title>
+      <Title>{{ spectacle?.name }}</Title>
     </Head>
     <Breadcrumb
       :home="{ to: '/', label: $t('navbar.home') }" :model="items" class="mb-6"
@@ -9,12 +9,12 @@
     />
     <div class="container mx-auto">
       <div class="relative md:mb-36">
-        <img v-if="concert" :src="concert.image" :alt="concert.name" class="w-full object-cover h-60 sm:h-72">
+        <img v-if="spectacle" :src="spectacle.image" :alt="spectacle.name" class="w-full object-cover h-60 sm:h-72">
         <Skeleton v-else height="15rem" class="z-0" />
         <div class="flex flex-col gap-2 tracking-tight bg-primary text-textonprimary sm:text-4xl inline-block px-14 py-10 w-full md:w-auto md:absolute md:rounded-tr-3xl md:bottom-[-3.5em]">
-          <div v-if="concert" class="flex flex-wrap gap-2">
+          <div v-if="spectacle" class="flex flex-wrap gap-2">
             <Chip
-              v-for="eventGenre in concert.eventGenres" :key="eventGenre.id" :pt="{
+              v-for="eventGenre in spectacle.eventGenres" :key="eventGenre.id" :pt="{
                 root: { class: 'bg-gradient-to-r from-white to-gray-200' }
               }"
             >
@@ -25,12 +25,12 @@
           </div>
           <div class="flex flex-wrap items-center gap-2 text-3xl font-bold ">
             <Chip
-              v-if="concert" :pt="{
+              v-if="spectacle" :pt="{
                 root: { class: 'bg-gradient-to-r from-primarylight to-primary' }
               }"
             >
               <template #default>
-                <span class="p-chip-text text-white text-xs">{{ concert.type.name }}</span>
+                <span class="p-chip-text text-white text-xs">{{ spectacle.type.name }}</span>
               </template>
             </Chip>
             <template v-else>
@@ -38,16 +38,16 @@
                 <Skeleton v-for="i in 2" :key="i" height="1.5rem" width="4rem" class="my-1 mr-2" />
               </div>
             </template>
-            <h1 v-if="concert">
-              {{ concert.name }}
+            <h1 v-if="spectacle">
+              {{ spectacle.name }}
             </h1>
             <Skeleton v-else height="2rem" width="100%" />
           </div>
-          <div v-if="concert" class="flex items-center gap-2 text-lg ">
+          <div v-if="spectacle" class="flex items-center gap-2 text-lg ">
             <Icon name="ic:outline-group" width="1.5rem" height="1.5rem" />
             <div class="flex flex-wrap flex-1 items-center gap-1 leading-none">
-              <template v-for="(eventArtist, index) in concert.eventArtists" :key="eventArtist.id">
-                <span>{{ eventArtist.artist.name }} <template v-if="index < concert.eventArtists.length - 1">/</template></span>
+              <template v-for="(eventArtist, index) in spectacle.eventArtists" :key="eventArtist.id">
+                <span>{{ eventArtist.artist.name }} <template v-if="index < spectacle.eventArtists.length - 1">/</template></span>
               </template>
             </div>
           </div>
@@ -55,38 +55,38 @@
             <Skeleton v-for="i in 2" :key="i" height="1rem" width="16rem" class="my-1" />
           </template>
           <div class="flex flex-col font-light text-lg gap-1">
-            <div v-if="concert" class="flex items-center gap-2">
+            <div v-if="spectacle" class="flex items-center gap-2">
               <Icon name="ic:sharp-place" />
               <div class="flex items-center gap-1 leading-none">
-                <span>{{ concert.place.name }}, {{ concert.place.city }}</span>
+                <span>{{ spectacle.place.name }}, {{ spectacle.place.city }}</span>
               </div>
             </div>
             <Skeleton v-else height="1rem" width="10rem" />
-            <div v-if="concert" class="flex items-center gap-2">
+            <div v-if="spectacle" class="flex items-center gap-2">
               <Icon name="material-symbols:date-range" />
-              <div>{{ dayjs(concert?.date).format('dddd DD MMMM YYYY, HH:mm') }}</div>
+              <div>{{ dayjs(spectacle?.date).format('dddd DD MMMM YYYY, HH:mm') }}</div>
             </div>
             <Skeleton v-else height="1rem" width="10rem" />
           </div>
         </div>
       </div>
       <div class="mx-auto max-w-2xl px-2 lg:grid lg:max-w-full lg:grid-cols-2 lg:gap-x-12">
-        <!-- concert details -->
+        <!-- spectacle details -->
         <section class="my-4">
           <Accordion :active-index="0">
             <AccordionTab :header="$t('event.details.description')">
               <template v-for="i in 4">
-                <Skeleton v-if="!concert" :key="i" class="mb-2" />
+                <Skeleton v-if="!spectacle" :key="i" class="mb-2" />
               </template>
-              <div v-if="concert" class="flex flex-col gap-3 text-base text-gray-500">
+              <div v-if="spectacle" class="flex flex-col gap-3 text-base text-gray-500">
                 <p>
-                  {{ concert?.description }}
+                  {{ spectacle?.description }}
                 </p>
                 <p class="flex flex-col">
                   <span class="font-bold">{{ $t('event.details.inLineUp') }} :</span>
                   <span>
-                    <template v-for="(eventArtist, index) in concert?.eventArtists" :key="eventArtist.id">
-                      <span>{{ eventArtist.artist.name }}<template v-if="index < concert.eventArtists.length - 1"> /
+                    <template v-for="(eventArtist, index) in spectacle?.eventArtists" :key="eventArtist.id">
+                      <span>{{ eventArtist.artist.name }}<template v-if="index < spectacle.eventArtists.length - 1"> /
                       </template></span>
                     </template>
                   </span>
@@ -95,39 +95,39 @@
             </AccordionTab>
             <AccordionTab :header="$t('event.details.place')">
               <iframe
-                v-if="concert" class="w-full h-64" style="border:0" loading="lazy" allowfullscreen
+                v-if="spectacle" class="w-full h-64" style="border:0" loading="lazy" allowfullscreen
                 referrerpolicy="no-referrer-when-downgrade"
-                :src="`https://www.google.com/maps/embed/v1/place?key=${config.public.googleApiKey}&q=${concert?.place?.address} ${concert?.place?.city} ${concert?.place?.zip}`"
+                :src="`https://www.google.com/maps/embed/v1/place?key=${config.public.googleApiKey}&q=${spectacle?.place?.address} ${spectacle?.place?.city} ${spectacle?.place?.zip}`"
               />
-              <Skeleton v-if="!concert" height="16rem" />
+              <Skeleton v-if="!spectacle" height="16rem" />
               <template v-for="i in 5">
-                <Skeleton v-if="!concert" :key="i" class="my-2" />
+                <Skeleton v-if="!spectacle" :key="i" class="my-2" />
               </template>
               <p class="text-xl font-bold mt-6">
-                {{ concert?.place?.name }}
+                {{ spectacle?.place?.name }}
               </p>
               <div class="flex flex-col">
-                <span>{{ concert?.place?.address }}</span>
-                <span>{{ concert?.place?.city }} {{ concert?.place?.zip }}</span>
+                <span>{{ spectacle?.place?.address }}</span>
+                <span>{{ spectacle?.place?.city }} {{ spectacle?.place?.zip }}</span>
               </div>
               <p class="mt-6">
-                {{ concert?.place?.description }}
+                {{ spectacle?.place?.description }}
               </p>
             </AccordionTab>
           </Accordion>
         </section>
 
-        <!-- concert form -->
+        <!-- spectacle form -->
         <section class="space-y-4">
           <span class="text-text text-2xl">{{ $t('event.reservation.title') }} :</span>
           <form>
             <div class="flex flex-col justify-between gap-4">
               <!-- Seat selector -->
               <template v-for="i in 3">
-                <Skeleton v-if="!concert" :key="i" height="5rem" />
+                <Skeleton v-if="!spectacle" :key="i" height="5rem" />
               </template>
               <div
-                v-for="eventSeatType in concert?.EventSeatType" :key="eventSeatType.id"
+                v-for="eventSeatType in spectacle?.EventSeatType" :key="eventSeatType.id"
                 class="flex flex-col sm:flex-row justify-center items-center bg-bghighlight text-texthighlight p-4 rounded"
               >
                 <label for="seat-type" class="grow text-xl font-medium">{{ eventSeatType.seatType.name }}</label>
@@ -153,7 +153,7 @@
                   class="w-full m-3 sm:w-3/4 sm:m-0" :header="$t('event.reservation.modalAvailableSeatType')"
                 >
                   <Fieldset
-                    v-for="eventSeatType in concert?.EventSeatType" :key="eventSeatType.id" class="mb-8"
+                    v-for="eventSeatType in spectacle?.EventSeatType" :key="eventSeatType.id" class="mb-8"
                     :legend="eventSeatType.seatType.name"
                   >
                     <p>Prix: {{ eventSeatType.price }} €</p>
@@ -184,9 +184,8 @@
 
 <script setup lang="ts">
 import { useToast } from 'primevue/usetoast'
-import { Event } from '~/types/Events/Event'
 import { PATH as constantPath } from '@/constants/pages'
-useHead({ titleTemplate: '%s » Concerts' })
+useHead({ titleTemplate: '%s » Spectacles' })
 
 const route = useRoute()
 const dayjs = useDayjs()
@@ -194,12 +193,12 @@ const toast = useToast()
 const seatsSelection = reactive({})
 const config = useRuntimeConfig()
 const { status, data } = useAuth()
-const { data: concert } = await useCustomFetch<Event>(`/events/${route.params.id}`)
+const { data: spectacle } = await useCustomFetch<Event>(`/events/${route.params.id}`)
 const i18n = useI18n({ useScope: 'global' })
 
 const items = ref([
-  { label: i18n.t('concert.title'), to: constantPath.CONCERTS_PAGE },
-  { label: concert.value?.name }
+  { label: i18n.t('spectacle.title'), to: constantPath.SPECTACLES_PAGE },
+  { label: spectacle.value?.name }
 ])
 const showCategoryPopup = ref(false)
 const userId = (data.value as any)?.user.id
@@ -210,7 +209,7 @@ const addToCart = async () => {
     toast.removeGroup('reservation')
     return toast.add({
       severity: 'info',
-      summary: i18n.t('concert.reservation.addToCartNotConnected'),
+      summary: i18n.t('spectacle.reservation.addToCartNotConnected'),
       life: 5000,
       group: 'reservation'
     })
@@ -223,15 +222,15 @@ const addToCart = async () => {
       if (quantity === 0) { continue }
       await window.Snipcart.api.cart.items.add({
         id,
-        name: concert.value?.EventSeatType.find(type => type.id === +id)?.seatType.name,
-        price: concert.value?.EventSeatType.find(type => type.id === +id)?.price,
+        name: spectacle.value?.EventSeatType.find(type => type.id === +id)?.seatType.name,
+        price: spectacle.value?.EventSeatType.find(type => type.id === +id)?.price,
         quantity,
         url: `${config.public.apiBase}/events/seat-types/${id}`,
         customFields: [
-          { name: 'event_name', value: concert.value?.name, type: 'string' },
-          { name: 'event_type', value: concert.value?.type.name, type: 'string' },
-          { name: 'event_date', value: dayjs(concert.value?.date).format('DD/MM/YYYY - hh[h]mm'), type: 'string' },
-          { name: 'event_place', value: concert.value?.place.name, type: 'string' }
+          { name: 'event_name', value: spectacle.value?.name, type: 'string' },
+          { name: 'event_type', value: spectacle.value?.type.name, type: 'string' },
+          { name: 'event_date', value: dayjs(spectacle.value?.date).format('DD/MM/YYYY - hh[h]mm'), type: 'string' },
+          { name: 'event_place', value: spectacle.value?.place.name, type: 'string' }
         ]
       })
       await window.Snipcart.api.cart.update({

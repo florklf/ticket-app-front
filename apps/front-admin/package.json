@@ -21,8 +21,7 @@
         "primeicons": "^6.0.1",
         "primevue": "^3.28.0",
         "zod": "^3.21.4",
-        "eslint-config-custom": "workspace:*",
-        "shared-interfaces": "workspace:*"
+        "eslint-config-custom": "workspace:*"
     },
     "devDependencies": {
         "@babel/eslint-parser": "^7.18.9",

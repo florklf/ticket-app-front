@@ -47,8 +47,7 @@
     "primevue": "^3.29.1",
     "vee-validate": "^4.9.4",
     "zod": "^3.21.4",
-    "eslint-config-custom": "workspace:*",
-    "shared-interfaces": "workspace:*"
+    "eslint-config-custom": "workspace:*"
   },
   "overrides": {
     "vue": "latest"

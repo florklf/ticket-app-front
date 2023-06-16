@@ -48,7 +48,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { EnumEventType } from 'shared-interfaces'
+import { EnumEventType } from '~/types/EnumEventType'
 import EventCard from '~/components/Events/EventCard.vue'
 useHead({
   titleTemplate: '%s - TicketApp'

@@ -21,7 +21,7 @@ export default defineNuxtConfig({
           id: 'theme-css',
           rel: 'stylesheet',
           type: 'text/css',
-          href: '/themes/lara-light-indigo/theme.css'
+          href: 'themes/lara-light-indigo/theme.css'
         }
       ]
     }
@@ -47,7 +47,8 @@ export default defineNuxtConfig({
   ],
   css: ['primeicons/primeicons.css', 'primeflex/primeflex.scss', 'primevue/resources/primevue.min.css', '@/assets/styles.scss'],
   auth: {
-    baseURL: process.env.NUXT_PUBLIC_API_BASE + '/',
+    // baseURL: process.env.NUXT_PUBLIC_API_BASE + '/', // An issue with nuxt-auth here: https://github.com/sidebase/nuxt-auth/issues/368
+    baseURL: 'https://tickets.rklf.fr/api/',
     provider: {
       type: 'local',
       endpoints: {

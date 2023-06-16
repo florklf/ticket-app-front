@@ -33,8 +33,6 @@ export default defineNuxtConfig({
   },
 
   auth: {
-    // baseURL: process.env.NUXT_PUBLIC_API_BASE + '/', // An issue with nuxt-auth here: https://github.com/sidebase/nuxt-auth/issues/368
-    baseURL: process.env.NUXT_PUBLIC_API_BASE + '/',
     provider: {
       type: 'local',
       endpoints: {
@@ -82,7 +80,7 @@ export default defineNuxtConfig({
   },
 
   snipcart: {
-    publicApiKey: process.env.SNIPCART_API_KEY,
+    publicApiKey: process.env.SNIPCART_API_KEY ?? 'NjE1YWRlYmUtNDAxNS00NzhhLTlmYzUtNmE1MWQwYmFmZDYzNjM4MjEzMTY4OTU3MDI4Mzg2',
     templatesUrl: '/snipcart-custom.html',
     currency: 'EUR',
     language: 'fr',

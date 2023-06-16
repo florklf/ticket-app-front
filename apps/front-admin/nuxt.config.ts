@@ -1,6 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  typescript: false,
   modules: [
     '@sidebase/nuxt-auth',
     [
@@ -47,15 +46,13 @@ export default defineNuxtConfig({
   ],
   css: ['primeicons/primeicons.css', 'primeflex/primeflex.scss', 'primevue/resources/primevue.min.css', '@/assets/styles.scss'],
   auth: {
-    // baseURL: process.env.NUXT_PUBLIC_API_BASE + '/', // An issue with nuxt-auth here: https://github.com/sidebase/nuxt-auth/issues/368
-    baseURL: 'https://tickets.rklf.fr/api/',
     provider: {
       type: 'local',
       endpoints: {
-        signIn: { path: '/auth/login', method: 'post' },
-        signOut: { path: '/auth/logout', method: 'post' },
+        signIn: { path: '/login', method: 'post' },
+        signOut: { path: '/logout', method: 'post' },
         signUp: { path: '/users', method: 'post' },
-        getSession: { path: '/auth/check', method: 'get' }
+        getSession: { path: '/check', method: 'get' }
       },
       pages: {
         login: '/signin'

@@ -33,13 +33,15 @@ export default defineNuxtConfig({
   },
 
   auth: {
+    // baseURL is overwrited by AUTH_ORIGIN at runtime (set here for local)
+    baseURL: process.env.NODE_ENV === 'production' ? '/api/auth' : process.env.NUXT_PUBLIC_API_BASE + '/auth',
     provider: {
       type: 'local',
       endpoints: {
-        signIn: { path: '/auth/login', method: 'post' },
-        signOut: { path: '/auth/logout', method: 'post' },
+        signIn: { path: '/login', method: 'post' },
+        signOut: { path: '/logout', method: 'post' },
         signUp: { path: '/users', method: 'post' },
-        getSession: { path: '/auth/check', method: 'get' }
+        getSession: { path: '/check', method: 'get' }
       },
       pages: {
         login: '/signin'

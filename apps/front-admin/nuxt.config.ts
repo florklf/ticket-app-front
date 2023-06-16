@@ -28,24 +28,10 @@ export default defineNuxtConfig({
   build: {
     transpile: ['primevue']
   },
-  script: [
-    {
-      strategy: 'lazyOnload',
-      src: 'https://www.googletagmanager.com/gtag/js?id=UA-93461466-1'
-    },
-    {
-      id: 'ga-analytics',
-      strategy: 'lazyOnload',
-      children: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'UA-93461466-1');
-          `
-    }
-  ],
   css: ['primeicons/primeicons.css', 'primeflex/primeflex.scss', 'primevue/resources/primevue.min.css', '@/assets/styles.scss'],
   auth: {
+    // baseURL is overwrited by AUTH_ORIGIN at runtime (set here for local)
+    baseURL: process.env.NODE_ENV === 'production' ? '/api/auth' : process.env.NUXT_PUBLIC_API_BASE + '/auth',
     provider: {
       type: 'local',
       endpoints: {

@@ -56,5 +56,5 @@ jobs:
               docker stop front-mobile front-admin
               docker network rm ticket-app
               docker network create ticket-app
-              docker run --rm -d --name front-mobile --network ticket-app -p 4001:4001 -e PORT=4001 -e SNIPCART_API_KEY="${{ secrets.SNIPCART_API_KEY }}" -e NUXT_PUBLIC_API_BASE="${{ secrets.PUBLIC_API_BASE }}" -e NUXT_PUBLIC_GOOGLE_API_KEY=${{ secrets.PUBLIC_GOOGLE_API_KEY }} foopy7774/front-mobile:latest
-              docker run --rm -d --name front-admin --network ticket-app -p 4002:4002 -e PORT=4002 -e NUXT_APP_BASE_URL="/admin/" -e NUXT_PUBLIC_API_BASE="${{ secrets.PUBLIC_API_BASE }}" foopy7774/front-admin:latest
+              docker run --rm -d --name front-mobile --network ticket-app -p 4001:4001 -e PORT=4001-e AUTH_ORIGIN="${{ secrets.PUBLIC_API_BASE }}" -e NUXT_PUBLIC_API_BASE="${{ secrets.PUBLIC_API_BASE }}" -e NUXT_PUBLIC_GOOGLE_API_KEY=${{ secrets.PUBLIC_GOOGLE_API_KEY }} foopy7774/front-mobile:latest
+              docker run --rm -d --name front-admin --network ticket-app -p 4002:4002 -e PORT=4002 -e NUXT_APP_BASE_URL="/admin/" -e AUTH_ORIGIN="${{ secrets.PUBLIC_API_BASE }}" -e NUXT_PUBLIC_API_BASE="${{ secrets.PUBLIC_API_BASE }}" foopy7774/front-admin:latest

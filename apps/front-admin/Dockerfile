@@ -49,7 +49,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nuxtjs
 USER nuxtjs
 
-COPY --from=installer /app/apps/front-admin/nuxt.config.js .
+COPY --from=installer /app/apps/front-admin/nuxt.config.ts .
 COPY --from=installer /app/apps/front-admin/package.json .
 
 # Automatically leverage output traces to reduce image size

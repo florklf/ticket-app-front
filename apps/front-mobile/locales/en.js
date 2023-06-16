@@ -4,7 +4,8 @@ export default {
     concert: 'Concerts',
     signin: 'I sign in',
     signout: 'I sign out',
-    dashboard: 'Dashboard'
+    dashboard: 'Dashboard',
+    cart: 'Cart'
   },
   footer: {
     rights: 'All rights reserved'

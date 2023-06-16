@@ -1,7 +1,7 @@
 <template>
   <div>
     <Head>
-      <Title>Concerts</Title>
+      <Title>Festivals</Title>
     </Head>
     <div class="card">
       <Breadcrumb
@@ -11,7 +11,7 @@
       <div class="bg-white">
         <div class="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:max-w-7xl">
           <h2 class="text-2xl font-bold leading-7 sm:truncate sm:text-3xl sm:tracking-tight mb-4">
-            Concerts
+            Festivals
           </h2>
           <div class="flex items-center mb-2">
             <ScrollPanel orientation="horizontal" class="w-full" :pt="{content: { class: 'flex gap-2 overflow-hidden' }}">
@@ -23,22 +23,22 @@
               />
             </ScrollPanel>
           </div>
-          <div v-if="concertsCount == 0" class="flex justify-center my-8">
+          <div v-if="festivalsCount == 0" class="flex justify-center my-8">
             <p class="text-gray-500">
-              Aucun concert à venir
+              Aucun festival à venir
             </p>
           </div>
           <div class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 md:grid-cols-3 md:gap-x-6 md:gap-y-10 lg:grid-cols-4 lg:gap-x-8">
             <div
-              v-for="concert in concerts" :key="concert.id"
+              v-for="festival in festivals" :key="festival.id"
               class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white"
             >
-              <EventCard :event="concert" />
+              <EventCard :event="festival" />
             </div>
           </div>
           <Paginator
             @page="handlePageChange" @update:rows="handleRowsChange" :rows="rowsCount"
-            :total-records="parseInt(concertsCount)" :rows-per-page-options="[12, 24, 48]"
+            :total-records="parseInt(festivalsCount)" :rows-per-page-options="[12, 24, 48]"
           />
         </div>
       </div>
@@ -58,30 +58,30 @@ const rowsCount = ref(12)
 const page = ref(0)
 const selectedGenre = ref(null)
 const items = ref([
-  { label: 'Concerts' }
+  { label: 'Festivals' }
 ])
 
-const { data: genres } = await useCustomFetch(`/genres?type=${EnumEventType.CONCERT}`)
+const { data: genres } = await useCustomFetch(`/genres?type=${EnumEventType.FESTIVAL}`)
 
 const eventsParams = computed(() => {
-  const params = { page: page.value, limit: rowsCount.value, type: EnumEventType.CONCERT }
+  const params = { page: page.value, limit: rowsCount.value, type: EnumEventType.FESTIVAL }
   if (selectedGenre.value) {
     return { ...params, genre: selectedGenre.value }
   }
   return params
 })
 const eventsCountParams = computed(() => {
-  const params = { type: EnumEventType.CONCERT }
+  const params = { type: EnumEventType.FESTIVAL }
   if (selectedGenre.value) {
     return { ...params, genre: selectedGenre.value }
   }
   return params
 })
-const { data: concertsCount } = await useCustomFetch('/events/count', {
+const { data: festivalsCount } = await useCustomFetch('/events/count', {
   params: eventsCountParams,
   watch: [selectedGenre]
 })
-const { data: concerts } = await useCustomFetch('/events', {
+const { data: festivals } = await useCustomFetch('/events', {
   params: eventsParams,
   watch: [page, rowsCount, selectedGenre]
 })

@@ -1,13 +1,13 @@
 <template>
-  <NuxtLink :to="`/${pluralize(event.type.toLowerCase())}/${event.id}`" class="flex flex-col flex-1">
+  <NuxtLink :to="`/${pluralize(event.type.name.toLowerCase())}/${event.id}`" class="flex flex-col flex-1">
     <div class="bg-gray-200 group-hover:opacity-90 sm:h-64 relative">
       <Chip
-        :label="event.type" class="absolute top-2 right-2 z-10" :pt="{
+        :label="event.type.name" class="absolute top-2 right-2 z-10" :pt="{
           root: { class: 'bg-gradient-to-r from-primarylight to-primary' }
         }"
       >
         <template #default>
-          <span class="p-chip-text text-white text-xs">{{ event.type }}</span>
+          <span class="p-chip-text text-white text-xs">{{ event.type.name }}</span>
         </template>
       </Chip>
       <img v-if="imageLoaded" :src="event.image" class="h-full w-full object-cover object-center sm:h-full sm:w-full">

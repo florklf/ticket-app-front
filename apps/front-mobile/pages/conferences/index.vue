@@ -1,7 +1,7 @@
 <template>
   <div>
     <Head>
-      <Title>Concerts</Title>
+      <Title>Conferences</Title>
     </Head>
     <div class="card">
       <Breadcrumb
@@ -11,7 +11,7 @@
       <div class="bg-white">
         <div class="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:max-w-7xl">
           <h2 class="text-2xl font-bold leading-7 sm:truncate sm:text-3xl sm:tracking-tight mb-4">
-            Concerts
+            Conferences
           </h2>
           <div class="flex items-center mb-2">
             <ScrollPanel orientation="horizontal" class="w-full" :pt="{content: { class: 'flex gap-2 overflow-hidden' }}">
@@ -25,15 +25,15 @@
           </div>
           <div v-if="concertsCount == 0" class="flex justify-center my-8">
             <p class="text-gray-500">
-              Aucun concert à venir
+              Aucune conference à venir
             </p>
           </div>
           <div class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 md:grid-cols-3 md:gap-x-6 md:gap-y-10 lg:grid-cols-4 lg:gap-x-8">
             <div
-              v-for="concert in concerts" :key="concert.id"
+              v-for="conference in conferences" :key="conference.id"
               class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white"
             >
-              <EventCard :event="concert" />
+              <EventCard :event="conference" />
             </div>
           </div>
           <Paginator
@@ -58,20 +58,20 @@ const rowsCount = ref(12)
 const page = ref(0)
 const selectedGenre = ref(null)
 const items = ref([
-  { label: 'Concerts' }
+  { label: 'Conferences' }
 ])
 
-const { data: genres } = await useCustomFetch(`/genres?type=${EnumEventType.CONCERT}`)
+const { data: genres } = await useCustomFetch(`/genres?type=${EnumEventType.CONFERENCE}`)
 
 const eventsParams = computed(() => {
-  const params = { page: page.value, limit: rowsCount.value, type: EnumEventType.CONCERT }
+  const params = { page: page.value, limit: rowsCount.value, type: EnumEventType.CONFERENCE }
   if (selectedGenre.value) {
     return { ...params, genre: selectedGenre.value }
   }
   return params
 })
 const eventsCountParams = computed(() => {
-  const params = { type: EnumEventType.CONCERT }
+  const params = { type: EnumEventType.CONFERENCE }
   if (selectedGenre.value) {
     return { ...params, genre: selectedGenre.value }
   }
@@ -81,7 +81,7 @@ const { data: concertsCount } = await useCustomFetch('/events/count', {
   params: eventsCountParams,
   watch: [selectedGenre]
 })
-const { data: concerts } = await useCustomFetch('/events', {
+const { data: conferences } = await useCustomFetch('/events', {
   params: eventsParams,
   watch: [page, rowsCount, selectedGenre]
 })

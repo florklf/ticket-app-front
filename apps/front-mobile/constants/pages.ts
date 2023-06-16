@@ -1,6 +1,9 @@
 const ENUM_PAGE = {
   HOME_PAGE: 'HOME_PAGE',
   CONCERTS_PAGE: 'CONCERTS_PAGE',
+  SPECTACLES_PAGE: 'SPECTACLES_PAGE',
+  FESTIVALS_PAGE: 'FESTIVALS_PAGE',
+  CONFERENCES_PAGE: 'CONFERENCES_PAGE',
   SIGNIN_PAGE: 'SIGNIN_PAGE',
   SIGNUP_PAGE: 'SIGNUP_PAGE',
   DASHBOARD_PAGE: 'DASHBOARD',
@@ -12,6 +15,9 @@ const ENUM_PAGE = {
 export const PATH = {
   [ENUM_PAGE.HOME_PAGE]: '/',
   [ENUM_PAGE.CONCERTS_PAGE]: '/concerts',
+  [ENUM_PAGE.SPECTACLES_PAGE]: '/spectacles',
+  [ENUM_PAGE.FESTIVALS_PAGE]: '/festivals',
+  [ENUM_PAGE.CONFERENCES_PAGE]: '/conferences',
   [ENUM_PAGE.SIGNIN_PAGE]: '/signin',
   [ENUM_PAGE.SIGNUP_PAGE]: '/signup',
   [ENUM_PAGE.DASHBOARD_PAGE]: '/dashboard',
@@ -22,6 +28,9 @@ export const PATH = {
 export const TITLE = {
   [ENUM_PAGE.HOME_PAGE]: null,
   [ENUM_PAGE.CONCERTS_PAGE]: 'Concerts',
+  [ENUM_PAGE.SPECTACLES_PAGE]: 'Spectacles',
+  [ENUM_PAGE.FESTIVALS_PAGE]: 'Festivals',
+  [ENUM_PAGE.CONFERENCES_PAGE]: 'Conférences',
   [ENUM_PAGE.SIGNIN_PAGE]: 'Connexion',
   [ENUM_PAGE.SIGNUP_PAGE]: 'Inscription',
   [ENUM_PAGE.DASHBOARD_PAGE]: 'Dashboard',

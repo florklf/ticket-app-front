@@ -33,8 +33,7 @@ export default defineNuxtConfig({
   },
 
   auth: {
-    // baseURL is overwrited by AUTH_ORIGIN at runtime (set here for local)
-    baseURL: process.env.NODE_ENV === 'production' ? '/api/auth' : process.env.NUXT_PUBLIC_API_BASE + '/auth',
+    baseURL: process.env.NODE_ENV === 'production' ? 'https://tickets.rklf.fr/api/auth' : process.env.NUXT_PUBLIC_API_BASE + '/auth',
     provider: {
       type: 'local',
       endpoints: {

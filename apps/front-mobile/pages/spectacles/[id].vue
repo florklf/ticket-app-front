@@ -185,6 +185,7 @@
 <script setup lang="ts">
 import { useToast } from 'primevue/usetoast'
 import { PATH as constantPath } from '@/constants/pages'
+import { Event } from '@/types/Events/Event'
 useHead({ titleTemplate: '%s » Spectacles' })
 
 const route = useRoute()
@@ -209,7 +210,7 @@ const addToCart = async () => {
     toast.removeGroup('reservation')
     return toast.add({
       severity: 'info',
-      summary: i18n.t('spectacle.reservation.addToCartNotConnected'),
+      summary: i18n.t('event.reservation.addToCartNotConnected'),
       life: 5000,
       group: 'reservation'
     })

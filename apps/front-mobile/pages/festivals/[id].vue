@@ -210,7 +210,7 @@ const addToCart = async () => {
     toast.removeGroup('reservation')
     return toast.add({
       severity: 'info',
-      summary: i18n.t('festival.reservation.addToCartNotConnected'),
+      summary: i18n.t('event.reservation.addToCartNotConnected'),
       life: 5000,
       group: 'reservation'
     })

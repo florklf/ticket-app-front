@@ -23,22 +23,22 @@
               />
             </ScrollPanel>
           </div>
-          <div v-if="concertsCount == 0" class="flex justify-center my-8">
+          <div v-if="spectaclesCount == 0" class="flex justify-center my-8">
             <p class="text-gray-500">
-              Aucun concert à venir
+              Aucun spectacle à venir
             </p>
           </div>
           <div class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 md:grid-cols-3 md:gap-x-6 md:gap-y-10 lg:grid-cols-4 lg:gap-x-8">
             <div
-              v-for="concert in concerts" :key="concert.id"
+              v-for="spectacle in spectacles" :key="spectacle.id"
               class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white"
             >
-              <EventCard :event="concert" />
+              <EventCard :event="spectacle" />
             </div>
           </div>
           <Paginator
             @page="handlePageChange" @update:rows="handleRowsChange" :rows="rowsCount"
-            :total-records="parseInt(concertsCount)" :rows-per-page-options="[12, 24, 48]"
+            :total-records="parseInt(spectaclesCount)" :rows-per-page-options="[12, 24, 48]"
           />
         </div>
       </div>
@@ -77,11 +77,11 @@ const eventsCountParams = computed(() => {
   }
   return params
 })
-const { data: concertsCount } = await useCustomFetch('/events/count', {
+const { data: spectaclesCount } = await useCustomFetch('/events/count', {
   params: eventsCountParams,
   watch: [selectedGenre]
 })
-const { data: concerts } = await useCustomFetch('/events', {
+const { data: spectacles } = await useCustomFetch('/events', {
   params: eventsParams,
   watch: [page, rowsCount, selectedGenre]
 })

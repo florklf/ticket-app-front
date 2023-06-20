@@ -2,17 +2,19 @@
 import { FilterMatchMode, FilterOperator } from 'primevue/api'
 import { ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
-import { Genre } from '~/types/Events/Genre'
+import { EnumEventType, Genre } from 'ts-interfaces'
+import { Type } from 'ts-interfaces/types/Events/Type'
 
 const { data: genres, refresh } = await useCustomFetch<Genre[]>('/genres')
 
 const toast = useToast()
-const loading = ref(null)
+const loading = ref(false)
 const genre: Ref<Partial<Genre>> = ref({})
 const genreDialog = ref(false)
 const deleteGenreDialog = ref(false)
 const submitted = ref(false)
 const filters = ref()
+const eventTypes = ref(Object.values(EnumEventType))
 
 const initFilters = () => {
   filters.value = {
@@ -28,17 +30,24 @@ const clearFilter1 = () => {
 }
 
 const openNew = () => {
-  genre.value = {}
+  genre.value = {
+    name: '',
+    type: {
+      name: EnumEventType.CONCERT
+    } as Type
+  }
+  console.info(genre.value)
   submitted.value = false
   genreDialog.value = true
 }
 
-const editGenre = (editedGenre) => {
+const editGenre = (editedGenre: Genre) => {
   genre.value = { ...editedGenre }
+  console.info(genre.value)
   genreDialog.value = true
 }
 
-const confirmDeleteGenre = (editedGenre) => {
+const confirmDeleteGenre = (editedGenre: Genre) => {
   genre.value = editedGenre
   deleteGenreDialog.value = true
 }
@@ -55,7 +64,12 @@ const saveGenre = async () => {
       await useCustomFetch<Event>(`/genres/${genre.value.id}`, {
         method: 'PATCH',
         body: {
-          name: genre.value.name
+          name: genre.value.name,
+          type: {
+            connect: {
+              name: genre.value.type?.name
+            }
+          }
         },
         key: 'genre'
       })
@@ -69,7 +83,10 @@ const saveGenre = async () => {
       await useCustomFetch<Event>('/genres', {
         method: 'POST',
         body: JSON.stringify({
-          ...genre.value
+          name: genre.value.name,
+          type: {
+            connect: genre.value.type
+          }
         }),
         key: 'genre'
       })
@@ -89,20 +106,20 @@ const saveGenre = async () => {
 const deleteGenre = async () => {
   const { error } = await useCustomFetch<Event>(`/genres/${genre.value.id}`, { method: 'DELETE', key: 'deleteGenre' })
   if (!error.value) {
-    genres.value = genres.value.filter(val => val.id !== genre.value.id)
+    genres.value = genres.value?.filter(val => val.id !== genre.value.id) ?? null
     deleteGenreDialog.value = false
     genre.value = {}
     toast.add({
       severity: 'success',
       summary: 'Succès',
-      detail: 'Lieu supprimé',
+      detail: 'Catégorie supprimée',
       life: 3000
     })
   } else {
     toast.add({
       severity: 'error',
       summary: 'Erreur',
-      detail: 'Impossible de supprimer un lieu lié à des évènements',
+      detail: 'Impossible de supprimer une catégorie liée à des évènements ou des artistes',
       life: 3000
     })
   }
@@ -154,9 +171,30 @@ const deleteGenre = async () => {
           <template #loading>
             Chargement des catégories...
           </template>
-          <Column sortable field="name" header="Name">
+          <Column sortable field="name" header="Nom">
             <template #filter="{ filterModel, filterCallback }">
-              <InputText v-model="filterModel.value" @input="filterCallback()" type="text" class="p-column-filter" genreholder="Search by name" />
+              <InputText v-model="filterModel.value" @input="filterCallback()" type="text" class="p-column-filter" genreholder="Rechercher par nom" />
+            </template>
+          </Column>
+          <Column
+            sortable header="Type" sort-field="type.name" filter-field="type.name" :show-filter-match-modes="false"
+            :filter-menu-style="{ width: '14rem' }"
+            style="min-width: 14rem"
+          >
+            <template #body="{ data }">
+              <Tag :value="data.type.name" />
+            </template>
+            <template #filter="{ filterModel, filterCallback }">
+              <div class="mb-3 text-bold">
+                Type d'évènement
+              </div>
+              <MultiSelect v-model="filterModel.value" @change="filterCallback" :options="eventTypes" placeholder="Any" class="p-column-filter">
+                <template #option="slotProps">
+                  <div class="p-multiselect-representative-option">
+                    <span>{{ slotProps.option }}</span>
+                  </div>
+                </template>
+              </MultiSelect>
             </template>
           </Column>
           <Column class="max-w-1rem">
@@ -172,6 +210,15 @@ const deleteGenre = async () => {
             <label for="name">Nom</label>
             <InputText id="name" v-model.trim="genre.name" required="true" autofocus :class="{ 'p-invalid': submitted && !genre.name }" />
             <small v-if="submitted && !genre.name" class="p-invalid">Le nom est requis.</small>
+          </div>
+          <div class="field">
+            <label class="mb-3">Type d'évènement</label>
+            <div class="formgrid grid">
+              <div v-for="(type, index) in eventTypes" :key="index" class="field-radiobutton col-6">
+                <RadioButton v-model="(genre as Genre).type.name" :input-id="type" name="type" :value="type" />
+                <label :for="type">{{ type }}</label>
+              </div>
+            </div>
           </div>
           <template #footer>
             <Button @click="hideGenreDialog" label="Cancel" icon="pi pi-times" class="p-button-text" />

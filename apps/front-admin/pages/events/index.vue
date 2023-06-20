@@ -2,11 +2,8 @@
 import { FilterMatchMode, FilterOperator } from 'primevue/api'
 import { ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
-import { EnumEventType } from '~/types/EnumEventType'
-import { EnumEventStatus } from '~/types/EnumEventStatus'
-import { Event } from '~/types/Events/Event'
-import { Place } from '~/types/Events/Place'
-import { SeatType } from '~/types/Events/SeatType'
+import { Event, Place, SeatType, EnumEventType, EnumEventStatus } from 'ts-interfaces'
+import { Type } from 'ts-interfaces/types/Events/Type'
 
 interface EventSeatType {
     id: number;
@@ -22,7 +19,7 @@ const { data: events, refresh } = await useCustomFetch<Event[]>('/events', { key
 const { data: places } = await useCustomFetch<Place[]>('/places')
 const toast = useToast()
 const dayjs = useDayjs()
-const loading = ref(null)
+const loading = ref(false)
 const selectedEvents = ref()
 const event: Ref<Partial<Event>> = ref({})
 const eventSeatType: Ref<Partial<EventSeatType>> = ref({})
@@ -41,7 +38,7 @@ const filters = ref()
 const expandedRows = ref([])
 
 const getEventsStatuses = () => {
-  events.value.forEach((event) => {
+  events.value?.forEach((event) => {
     event.date = new Date(event.date)
     if (event.date < new Date()) {
       event.status = EnumEventStatus.PAST
@@ -71,7 +68,7 @@ const initFilters = () => {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
     'place.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-    type: { value: null, matchMode: FilterMatchMode.IN },
+    'type.name': { value: null, matchMode: FilterMatchMode.IN },
     status: { value: null, matchMode: FilterMatchMode.IN },
     date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] }
   }
@@ -83,7 +80,7 @@ const clearFilter1 = () => {
   initFilters()
 }
 
-const getSeverity = (status) => {
+const getSeverity = (status: EnumEventStatus) => {
   switch (status) {
     case EnumEventStatus.AVAILABLE:
       return 'success'
@@ -97,12 +94,19 @@ const getSeverity = (status) => {
 }
 
 const openNew = () => {
-  event.value = {}
+  event.value = {
+    name: '',
+    description: '',
+    date: new Date(),
+    type: {
+      name: EnumEventType.CONCERT
+    } as Type
+  }
   submitted.value = false
   eventDialog.value = true
 }
 
-const openNewEventSeatType = (event) => {
+const openNewEventSeatType = (event: Event) => {
   expandedEvent.value = event
   eventSeatType.value = {}
   submitted.value = false
@@ -121,7 +125,7 @@ const hideEventSeatTypeDialog = () => {
 
 const saveEvent = async () => {
   submitted.value = true
-  if (event.value.name && event.value.name.trim()) {
+  if (event.value.name?.trim() && event.value.description && event.value.place && event.value.type && event.value.date && event.value.date > new Date()) {
     if (event.value.id) {
       const { data: updatedEvent } = await useCustomFetch<Event>(`/events/${event.value.id}`, {
         method: 'PATCH',
@@ -129,7 +133,11 @@ const saveEvent = async () => {
           name: event.value.name,
           description: event.value.description,
           date: dayjs(event.value.date).format('YYYY-MM-DD HH:mm:ss'),
-          type: event.value.type,
+          type: {
+            connect: {
+              name: event.value.type.name
+            }
+          },
           place: {
             connect: {
               id: event.value.place.id
@@ -148,10 +156,17 @@ const saveEvent = async () => {
         life: 3000
       })
     } else {
+      const { type, ...eventWithoutType } = event.value
+      console.info(event.value, eventWithoutType, type)
       const { data: createdEvent } = await useCustomFetch<Event>('/events', {
         method: 'POST',
         body: JSON.stringify({
-          ...event.value,
+          ...eventWithoutType,
+          type: {
+            connect: {
+              name: type.name
+            }
+          },
           date: dayjs(event.value.date).format('YYYY-MM-DD HH:mm:ss'),
           place: {
             connect: {
@@ -192,7 +207,7 @@ const saveEventSeatType = async () => {
           available_seats: eventSeatType.value.available_seats,
           seatType: {
             connect: {
-              id: eventSeatType.value.seatType.id
+              id: eventSeatType.value.seatType?.id
             }
           }
         },
@@ -236,32 +251,32 @@ const saveEventSeatType = async () => {
   }
 }
 
-const uploadImage = async (event) => {
+const uploadImage = async (event: Ref<Event | null>) => {
   const formdata = new FormData()
   formdata.append('file', eventImage.value)
-  await useCustomFetch<Event>(`/events/${event.value.id}/upload`, {
+  await useCustomFetch<Event>(`/events/${event.value?.id}/upload`, {
     method: 'POST',
     body: formdata,
     key: 'uploadImage'
   })
 }
 
-const editEvent = (editEvent) => {
+const editEvent = (editEvent: Event) => {
   event.value = { ...editEvent }
   eventDialog.value = true
 }
 
-const editEventSeatType = (editEventSeatType) => {
+const editEventSeatType = (editEventSeatType: EventSeatType) => {
   eventSeatType.value = { ...editEventSeatType }
   eventSeatTypeDialog.value = true
 }
 
-const confirmDeleteEvent = (editEvent) => {
+const confirmDeleteEvent = (editEvent: Event) => {
   event.value = editEvent
   deleteEventDialog.value = true
 }
 
-const confirmDeleteEventSeatType = (editEventSeatType) => {
+const confirmDeleteEventSeatType = (editEventSeatType: EventSeatType) => {
   eventSeatType.value = editEventSeatType
   deleteEventSeatTypeDialog.value = true
 }
@@ -270,7 +285,7 @@ const deleteEvent = async () => {
   const { error } = await useCustomFetch<Event>(`/events/${event.value.id}`, { method: 'DELETE', key: 'deleteEvent' })
   console.info(error)
   if (!error.value) {
-    events.value = events.value.filter(val => val.id !== event.value.id)
+    events.value = events.value?.filter(val => val.id !== event.value.id) ?? null
     deleteEventDialog.value = false
     event.value = {}
     toast.add({
@@ -293,7 +308,7 @@ const deleteEventSeatType = async () => {
   const { error } = await useCustomFetch<Event>(`/events/seat-types/${eventSeatType.value.id}`, { method: 'DELETE', key: 'deleteEventSeatType' })
   console.info(error)
   if (!error.value) {
-    events.value = events.value.filter(val => val.id !== eventSeatType.value.id)
+    events.value = events.value?.filter(val => val.id !== eventSeatType.value.id) ?? null
     deleteEventSeatTypeDialog.value = false
     eventSeatType.value = {}
     toast.add({
@@ -318,7 +333,7 @@ const confirmDeleteSelected = () => {
 }
 
 const deleteSelectedEvents = () => {
-  events.value = events.value.filter(val => !selectedEvents.value.includes(val))
+  events.value = events.value?.filter(val => !selectedEvents.value.includes(val)) ?? null
   deleteEventsDialog.value = false
   selectedEvents.value = null
   toast.add({
@@ -329,14 +344,17 @@ const deleteSelectedEvents = () => {
   })
 }
 
-const onFileChange = (event) => {
-  eventImage.value = event.target.files[0]
-  if (event.target.files[0]?.name) {
-    document.getElementById('image-field-label').textContent = event.target.files[0].name.slice(0, 30) + '...'
-  } else {
-    document.getElementById('image-field-label').textContent = 'Choisir une image'
+const onFileChange = (e: any) => {
+  eventImage.value = e.target?.files[0]
+  const imageFieldLabel = document.getElementById('image-field-label')
+  if (imageFieldLabel) {
+    if (e.target.files[0]?.name) {
+      imageFieldLabel.textContent = e.target.files[0].name.slice(0, 30) + '...'
+    } else {
+      imageFieldLabel.textContent = 'Choisir une image'
+    }
   }
-  console.info(event)
+  console.info(e)
 }
 </script>
 
@@ -373,7 +391,7 @@ const onFileChange = (event) => {
           <template #header>
             <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
               <h5 class="m-0">
-                Manage Events
+                Gestion des évènements
               </h5>
               <div class="flex gap-4">
                 <Button @click="clearFilter1()" type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined mb-2" />
@@ -393,8 +411,13 @@ const onFileChange = (event) => {
           <Column expander style="width: 5rem" />
           <Column sortable field="name" header="Name" style="min-width: 12rem">
             <template #body="{ data }">
-              <img :alt="data.type" :src="data.image" class="shadow-2 border-round" width="32" style="vertical-align: middle">
-              <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.name }}</span>
+              <div v-if="data.image">
+                <img :alt="data.type" :src="data.image" class="shadow-2 border-round" width="32" style="vertical-align: middle">
+                <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.name }}</span>
+              </div>
+              <div v-else>
+                <span>{{ data.name }}</span>
+              </div>
             </template>
             <template #filter="{ filterModel, filterCallback }">
               <InputText v-model="filterModel.value" @input="filterCallback()" type="text" class="p-column-filter" placeholder="Search by name" />
@@ -402,8 +425,7 @@ const onFileChange = (event) => {
           </Column>
           <Column sortable sort-field="place.name" header="Place" filter-field="place.name" style="min-width: 12rem">
             <template #body="{ data }">
-              <img src="/demo/images/flag/flag_placeholder.png" :alt="data.place.name" width="30">
-              <span style="margin-left: 0.5em; vertical-align: middle" class="image-text">{{ data.place.name }}</span>
+              <span>{{ data.place.name }}</span>
             </template>
             <template #filter="{ filterModel, filterCallback }">
               <InputText v-model="filterModel.value" @input="filterCallback()" type="text" class="p-column-filter" placeholder="Search by place" />
@@ -416,16 +438,16 @@ const onFileChange = (event) => {
             </template>
           </Column>
           <Column
-            sortable header="Type" sort-field="type" filter-field="type" :show-filter-match-modes="false"
+            sortable header="Type" sort-field="type.name" filter-field="type.name" :show-filter-match-modes="false"
             :filter-menu-style="{ width: '14rem' }"
             style="min-width: 14rem"
           >
             <template #body="{ data }">
-              <Tag :value="data.type" />
+              <Tag :value="data.type.name" />
             </template>
             <template #filter="{ filterModel, filterCallback }">
               <div class="mb-3 text-bold">
-                Type de concert
+                Type d'évènement
               </div>
               <MultiSelect v-model="filterModel.value" @change="filterCallback" :options="eventTypes" placeholder="Any" class="p-column-filter">
                 <template #option="slotProps">
@@ -472,9 +494,9 @@ const onFileChange = (event) => {
           <Column field="available_seats" header="Places disponibles" :show-filter-match-modes="false" style="min-width: 12rem">
             <template #body="{ data }">
               <ClientOnly>
-                <span class="block mx-auto text-right text-sm font-bold">{{ data.EventSeatType.reduce((total, eventSeat) => total + eventSeat.available_seats, 0).toLocaleString() }}</span>
+                <span class="block mx-auto text-right text-sm font-bold">{{ data.EventSeatType.reduce((total: number, eventSeatType: EventSeatType) => total + eventSeatType.available_seats, 0).toLocaleString() }}</span>
                 <ProgressBar
-                  :value="(data.EventSeatType.reduce((total, seatType) => total + seatType.available_seats, 0) / data.EventSeatType.reduce((total, eventSeatType) => total + eventSeatType.seatType?.capacity, 0)) * 100"
+                  :value="(data.EventSeatType.reduce((total: number, seatType: EventSeatType) => total + seatType.available_seats, 0) / data.EventSeatType.reduce((total: number, eventSeatType: EventSeatType) => total + eventSeatType.seatType?.capacity, 0)) * 100"
                   :show-value="false" style="height: 0.5rem"
                 />
                 <template #fallback>
@@ -495,7 +517,7 @@ const onFileChange = (event) => {
               <Button @click="editEvent(slotProps.data)" icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" />
               <Button
                 @click="confirmDeleteEvent(slotProps.data)" icon="pi pi-trash" class="p-button-rounded p-button-warning mt-2"
-                :disabled="slotProps.data.EventSeatType.some(eventSeatType => eventSeatType.available_seats !== eventSeatType.seatType.capacity)"
+                :disabled="slotProps.data.EventSeatType.some((eventSeatType: EventSeatType) => eventSeatType.available_seats !== eventSeatType.seatType.capacity)"
               />
             </template>
           </Column>
@@ -509,8 +531,8 @@ const onFileChange = (event) => {
                 <div class="my-2">
                   <Dropdown
                     v-model="selectedSeatType"
-                    @change="openNewEventSeatType(slotProps.data)" :options="slotProps.data.place.seatTypes.filter(seatType => !(slotProps.data.EventSeatType.map(eventSeatType => eventSeatType.seat_type_id)).includes(seatType.id))"
-                    option-label="name" placeholder="Nouveau" :disabled="!slotProps.data.place.seatTypes.some(seatType => !(slotProps.data.EventSeatType.map(eventSeatType => eventSeatType.seat_type_id)).includes(seatType.id))"
+                    @change="openNewEventSeatType(slotProps.data)" :options="slotProps.data.place.seatTypes.filter((seatType: SeatType) => !(slotProps.data.EventSeatType.map((eventSeatType: EventSeatType) => eventSeatType.seat_type_id)).includes(seatType.id))"
+                    option-label="name" placeholder="Nouveau" :disabled="!slotProps.data.place.seatTypes.some((seatType: SeatType) => !(slotProps.data.EventSeatType.map((eventSeatType: EventSeatType) => eventSeatType.seat_type_id)).includes(seatType.id))"
                     class="w-full bg-primary text-white"
                   >
                     <template #value>
@@ -571,11 +593,15 @@ const onFileChange = (event) => {
           <div class="field">
             <label for="name">Name</label>
             <InputText id="name" v-model.trim="event.name" required="true" autofocus :class="{ 'p-invalid': submitted && !event.name }" />
-            <small v-if="submitted && !event.name" class="p-invalid">Le nom est requis.</small>
+            <small v-if="submitted && !event.name" class="p-error">Le nom est requis.</small>
           </div>
           <div class="field">
             <label for="description">Description</label>
-            <Textarea id="description" v-model="event.description" required="true" rows="3" cols="20" />
+            <Textarea
+              id="description" v-model="event.description" required="true" rows="3" cols="20"
+              :class="{ 'p-invalid': submitted && !event.description }"
+            />
+            <small v-if="submitted && !event.description" class="p-error">La description est requise.</small>
           </div>
 
           <div class="field flex flex-column align-items-start">
@@ -590,10 +616,11 @@ const onFileChange = (event) => {
             <label class="mb-3">Type d'évènement</label>
             <div class="formgrid grid">
               <div v-for="(type, index) in eventTypes" :key="index" class="field-radiobutton col-6">
-                <RadioButton v-model="event.type" :input-id="type" name="type" :value="type" />
+                <RadioButton v-model="(event as Event).type.name" :input-id="type" name="type" :value="type" :class="{ 'p-invalid': submitted && !event.type?.name }" />
                 <label :for="type">{{ type }}</label>
               </div>
             </div>
+            <small v-if="submitted && !event.type?.name" class="p-error">Le type est requis.</small>
           </div>
 
           <div class="formgrid grid">
@@ -601,8 +628,8 @@ const onFileChange = (event) => {
               <label class="mb-3">Lieu de l'évènement</label>
               <Dropdown
                 v-model="event.place"
-                :disabled="event.EventSeatType?.some(eventSeat => eventSeat.available_seats < eventSeat.seatType.capacity)" :options="places" filter option-label="name"
-                placeholder="Sélectionner un lieu" class="w-full md:w-14rem"
+                :disabled="event.EventSeatType?.some(eventSeat => eventSeat.available_seats < eventSeat.seatType.capacity)" :options="places as Place[]" filter option-label="name"
+                placeholder="Sélectionner un lieu" class="w-full md:w-14rem" :class="{ 'p-invalid': submitted && !event.place?.name }"
               >
                 <template #value="slotProps">
                   <div v-if="slotProps.value" class="flex align-items-center">
@@ -618,11 +645,14 @@ const onFileChange = (event) => {
                   </div>
                 </template>
               </Dropdown>
-              <small>Impossible de modifier le lieu une fois la vente démarrée</small>
+              <small v-if="submitted && !event.place?.name" class="p-error">Le type est requis.</small>
+              <small v-if="event.EventSeatType?.some(eventSeat => eventSeat.available_seats < eventSeat.seatType.capacity)">Impossible de modifier le lieu une fois la vente démarrée</small>
             </div>
             <div class="field col">
               <label class="mb-3">Date</label>
-              <Calendar v-model="event.date" show-time hour-format="24" :min="Date.now()" />
+              <Calendar v-model="event.date" show-time hour-format="24" :min="Date.now()" :class="{ 'p-invalid': submitted && (!event.date || event.date < new Date()) }" />
+              <small v-if="submitted && !event.date" class="p-error">La date est requise</small>
+              <small v-else-if="submitted && event.date && (event.date < new Date())" class="p-error">La date ne peut pas être dans le passé</small>
             </div>
           </div>
           <template #footer>
@@ -666,7 +696,7 @@ const onFileChange = (event) => {
         <Dialog v-model:visible="deleteEventSeatTypeDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
           <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-            <span v-if="event">Are you sure you want to delete <b>{{ eventSeatType.seatType.name }}</b>?</span>
+            <span v-if="event">Are you sure you want to delete <b>{{ eventSeatType.seatType?.name }}</b>?</span>
           </div>
           <template #footer>
             <Button @click="deleteEventSeatTypeDialog = false" label="No" icon="pi pi-times" class="p-button-text" />

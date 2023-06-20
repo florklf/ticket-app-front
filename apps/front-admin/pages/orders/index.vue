@@ -2,11 +2,12 @@
 import { FilterMatchMode, FilterOperator } from 'primevue/api'
 import { ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
-import { Order } from '~/types/Events/Order'
+import { Order } from 'ts-interfaces'
 
 const { data: orders } = await useCustomFetch<Order[]>('/orders')
+
 const ordersTable = computed(() => {
-  return orders.value.map((order) => {
+  return orders.value?.map((order: Order) => {
     return {
       ...order,
       created_at: new Date(order.created_at),
@@ -19,16 +20,15 @@ const ordersTable = computed(() => {
 })
 const dataTable = ref()
 const exportCSV = () => {
-  console.info(dataTable.value)
   if (!dataTable.value) {
     toast.add({ severity: 'warn', summary: 'No data to export', life: 3000 })
   }
   dataTable.value.exportCSV()
 }
-const regionNames = new Intl.DisplayNames(['en'], { type: 'region' })
+const regionNames = new Intl.DisplayNames(['fr'], { type: 'region' })
 const dayjs = useDayjs()
 const toast = useToast()
-const loading = ref(null)
+const loading = ref(false)
 const filters = ref()
 const expandedRows = ref([])
 
@@ -53,6 +53,7 @@ const clearFilter1 = () => {
 
 <template>
   <div class="grid">
+    <a href="/orders/1">lien</a>
     <div class="col-12">
       <div v-if="orders" class="card">
         <Toast />
@@ -161,7 +162,7 @@ const clearFilter1 = () => {
           </Column>
           <Column header-style="width: 5rem; text-align: center" body-style="text-align: center; overflow: visible">
             <template #body="slotProps">
-              <NuxtLink :to="`orders/${slotProps.data?.id}`">
+              <NuxtLink :to="`orders/${slotProps.data.id}`">
                 <Button type="button" icon="pi pi-cog" rounded />
               </NuxtLink>
             </template>

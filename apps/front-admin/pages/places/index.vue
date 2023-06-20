@@ -2,13 +2,12 @@
 import { FilterMatchMode, FilterOperator } from 'primevue/api'
 import { ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
-import { Place } from '~/types/Places/Place'
-import { SeatType } from '~/types/Places/SeatType'
+import { Place, SeatType } from 'ts-interfaces'
 
 const { data: places, refresh } = await useCustomFetch<Place[]>('/places')
 
 const placesTable = computed(() => {
-  return places.value.map((place) => {
+  return places.value?.map((place) => {
     return {
       ...place,
       capacity: place.seatTypes.reduce((acc, val) => acc + val.capacity, 0),
@@ -17,7 +16,7 @@ const placesTable = computed(() => {
   })
 })
 const toast = useToast()
-const loading = ref(null)
+const loading = ref(false)
 const place: Ref<Partial<Place>> = ref({})
 const seatType: Ref<Partial<SeatType>> = ref({})
 const placeDialog = ref(false)
@@ -49,30 +48,30 @@ const openNew = () => {
   placeDialog.value = true
 }
 
-const openNewSeatType = (parentPlace) => {
+const openNewSeatType = (parentPlace: Place) => {
   place.value = parentPlace
   seatType.value = {}
   submitted.value = false
   seatTypeDialog.value = true
 }
 
-const editPlace = (editedPlace) => {
+const editPlace = (editedPlace: Place) => {
   place.value = { ...editedPlace }
   placeDialog.value = true
 }
 
-const editSeatType = (editedSeatType) => {
-  place.value = places.value.find(val => val.id === editedSeatType.place_id)
+const editSeatType = (editedSeatType: SeatType) => {
+  place.value = places.value?.find(val => val.id === editedSeatType.place_id) as Partial<Place>
   seatType.value = { ...editedSeatType }
   seatTypeDialog.value = true
 }
 
-const confirmDeletePlace = (editedPlace) => {
+const confirmDeletePlace = (editedPlace: Place) => {
   place.value = editedPlace
   deletePlaceDialog.value = true
 }
 
-const confirmDeleteSeatType = (editedSeatType) => {
+const confirmDeleteSeatType = (editedSeatType: SeatType) => {
   seatType.value = editedSeatType
   deleteSeatTypeDialog.value = true
 }
@@ -177,7 +176,7 @@ const saveSeatType = async () => {
 const deletePlace = async () => {
   const { error } = await useCustomFetch<Event>(`/places/${place.value.id}`, { method: 'DELETE', key: 'deletePlace' })
   if (!error.value) {
-    places.value = places.value.filter(val => val.id !== place.value.id)
+    places.value = places.value?.filter(val => val.id !== place.value.id) ?? null
     deletePlaceDialog.value = false
     place.value = {}
     toast.add({
@@ -288,7 +287,7 @@ const deleteSeatType = async () => {
             style="min-width: 12rem"
           >
             <template #body="{ data }">
-              <span>{{ data.seatTypes.reduce((total, seatType) => total + seatType.capacity, 0) }}</span>
+              <span>{{ data.seatTypes.reduce((total: number, seatType: SeatType) => total + seatType.capacity, 0) }}</span>
             </template>
             <template #filter="{ filterModel, filterCallback }">
               <InputNumber v-model="filterModel.value" @input="filterCallback()" class="p-column-filter" placeholder="Capacité" />
@@ -361,7 +360,7 @@ const deleteSeatType = async () => {
               />
             </div>
           </div>
-          <span v-if="place.id" class="mt-3">Capacité maximale: <span class="font-bold">{{ place.seatTypes.reduce((total, seatType) => total + seatType.capacity, 0) }}</span></span>
+          <span v-if="place.id" class="mt-3">Capacité maximale: <span class="font-bold">{{ place.seatTypes?.reduce((total, seatType) => total + seatType.capacity, 0) }}</span></span>
           <template #footer>
             <Button @click="hidePlaceDialog" label="Cancel" icon="pi pi-times" class="p-button-text" />
             <Button @click="savePlace" label="Save" icon="pi pi-check" class="p-button-text" />

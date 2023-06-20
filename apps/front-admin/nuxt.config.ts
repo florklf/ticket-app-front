@@ -20,13 +20,17 @@ export default defineNuxtConfig({
           id: 'theme-css',
           rel: 'stylesheet',
           type: 'text/css',
-          href: 'themes/lara-light-indigo/theme.css'
+          href: '/themes/lara-light-indigo/theme.css'
         }
       ]
     }
   },
   build: {
     transpile: ['primevue']
+  },
+  dayjs: {
+    locales: ['fr'],
+    defaultLocale: 'fr'
   },
   css: ['primeicons/primeicons.css', 'primeflex/primeflex.scss', 'primevue/resources/primevue.min.css', '@/assets/styles.scss'],
   auth: {
@@ -64,5 +68,8 @@ export default defineNuxtConfig({
   },
   i18n: {
     vueI18n: './i18n.config.ts'
+  },
+  typescript: {
+    shim: false
   }
 })

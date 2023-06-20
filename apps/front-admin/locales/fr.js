@@ -6,5 +6,10 @@ export default {
       SOLD_OUT: 'Complet',
       PAST: 'Passé'
     }
+  },
+  payment: {
+    method: {
+      CreditCard: 'Carte bancaire'
+    }
   }
 }

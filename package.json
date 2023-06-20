@@ -7,6 +7,10 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "prepare": "husky install"
   },
+  "dependencies": {
+    "ts-interfaces": "workspace:*",
+    "eslint-config-custom": "workspace:*"
+  },
   "devDependencies": {
     "@turbo/gen": "^1.10.1",
     "eslint": "^8.42.0",

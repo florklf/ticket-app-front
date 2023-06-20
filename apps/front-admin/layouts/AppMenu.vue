@@ -12,7 +12,8 @@ const model = ref([
       { label: 'Evenements', icon: 'pi pi-fw pi-calendar', to: '/events' },
       { label: 'Lieux', icon: 'pi pi-fw pi-map-marker', to: '/places' },
       { label: 'Categories', icon: 'pi pi-fw pi-tags', to: '/categories' },
-      { label: 'Utilisateurs', icon: 'pi pi-fw pi-users', to: '/users' }
+      { label: 'Utilisateurs', icon: 'pi pi-fw pi-users', to: '/users' },
+      { label: 'Commandes', icon: 'pi pi-fw pi-shopping-cart', to: '/orders' }
     ]
   }
 ])

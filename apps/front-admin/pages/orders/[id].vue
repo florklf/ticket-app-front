@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const { data: order } = await useCustomFetch<Order>(`/orders/${route.params.id}?include=true`)
+console.info(order.value)
 const layout = ref<'grid' | 'list' | undefined>('list')
 const dayjs = useDayjs()
 const seeInvoice = () => {
@@ -11,9 +12,9 @@ const seeInvoice = () => {
 }
 
 const getSeverity = (orderItem: OrderItem) => {
-  if (orderItem.available_seats < 1) {
+  if (orderItem.seatType.available_seats < 1) {
     return 'danger'
-  } else if (orderItem.available_seats < orderItem.seatType.seatType.capacity / 20) {
+  } else if (orderItem.seatType.available_seats < orderItem.seatType.seatType.capacity / 20) {
     return 'warning'
   } else {
     return 'success'

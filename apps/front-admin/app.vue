@@ -3,7 +3,7 @@
 <template>
   <NuxtLayout>
     <NuxtLoadingIndicator :height="5" color="#295bac" />
-    <NuxtPage />
+    <NuxtPage :key="$route.fullPath" />
   </NuxtLayout>
 </template>
 

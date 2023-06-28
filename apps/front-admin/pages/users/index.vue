@@ -11,19 +11,17 @@ const loading = ref(false)
 const user: Ref<Partial<User>> = ref({})
 const userDialog = ref(false)
 const deleteUserDialog = ref(false)
-const submitted = ref(false)
 const filters = ref()
 const roles = ref(Object.values(EnumRole))
 
-const schema = toTypedSchema(
-  zod.object({
-    firstname: zod.string({ required_error: 'Ce champ est requis' }),
-    lastname: zod.string({ required_error: 'Ce champ est requis' }),
-    email: zod.string({ required_error: 'Ce champ est requis' }).email({ message: 'L\'adresse mail doit être valide' }),
-    password: zod.string({ required_error: 'Ce champ est requis' }).min(4, { message: '4 caractères minimum' }),
-    role: zod.nativeEnum(EnumRole, { required_error: 'Ce champ est requis' })
-  })
-)
+const schema = zod.object({
+  firstname: zod.string({ required_error: 'Ce champ est requis' }),
+  lastname: zod.string({ required_error: 'Ce champ est requis' }),
+  email: zod.string({ required_error: 'Ce champ est requis' }).email({ message: 'L\'adresse mail doit être valide' }),
+  password: zod.string({ required_error: 'Ce champ est requis' }).min(4, { message: '4 caractères minimum' }),
+  role: zod.nativeEnum(EnumRole, { required_error: 'Ce champ est requis' })
+})
+const typedSchema = ref(toTypedSchema(schema))
 
 const initFilters = () => {
   filters.value = {
@@ -37,19 +35,21 @@ const initFilters = () => {
 
 initFilters()
 
-const clearFilter1 = () => {
+const clearFilter = () => {
   initFilters()
 }
 
 const openNew = () => {
-  console.info(user.value)
-  submitted.value = false
+  user.value = {}
   userDialog.value = true
+  typedSchema.value = toTypedSchema(schema)
 }
 
 const editUser = (editedUser: User) => {
   user.value = { ...editedUser }
-  console.info(user.value)
+  if (user.value?.id) {
+    typedSchema.value = toTypedSchema(schema.partial())
+  }
   userDialog.value = true
 }
 
@@ -58,19 +58,11 @@ const confirmDeleteUser = (editedUser: User) => {
   deleteUserDialog.value = true
 }
 
-const hideUserDialog = () => {
-  userDialog.value = false
-  submitted.value = false
-}
-
 const saveUser = async () => {
-  submitted.value = true
   if (user.value.id) {
     await useCustomFetch<User>(`/users/${user.value.id}`, {
       method: 'PATCH',
-      body: {
-        ...user.value
-      },
+      body: { ...user.value },
       key: 'user'
     })
     toast.add({
@@ -82,9 +74,7 @@ const saveUser = async () => {
   } else {
     await useCustomFetch<User>('/users', {
       method: 'POST',
-      body: {
-        ...user.value
-      },
+      body: { ...user.value },
       key: 'user'
     })
     toast.add({
@@ -108,14 +98,14 @@ const deleteUser = async () => {
     toast.add({
       severity: 'success',
       summary: 'Succès',
-      detail: 'Catégorie supprimée',
+      detail: 'Utilisateur supprimé',
       life: 3000
     })
   } else {
     toast.add({
       severity: 'error',
       summary: 'Erreur',
-      detail: 'Impossible de supprimer une catégorie liée à des évènements ou des artistes',
+      detail: 'Impossible de supprimer cet utilisateur',
       life: 3000
     })
   }
@@ -145,7 +135,7 @@ const deleteUser = async () => {
           filter-display="menu"
           :loading="loading"
           responsive-layout="scroll"
-          :global-filter-fields="['name']"
+          :global-filter-fields="['firstname', 'lastname', 'email']"
         >
           <template #header>
             <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
@@ -153,7 +143,7 @@ const deleteUser = async () => {
                 Gestion des utilisateurs
               </h5>
               <div class="flex gap-4">
-                <Button @click="clearFilter1()" type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined mb-2" />
+                <Button @click="clearFilter()" type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined mb-2" />
                 <span class="block mt-2 md:mt-0 p-input-icon-left">
                   <i class="pi pi-search" />
                   <InputText v-model="filters['global'].value" genreholder="Search..." />
@@ -221,7 +211,7 @@ const deleteUser = async () => {
             id="saveUserForm"
             @submit="saveUser"
             :initial-values="user"
-            :validation-schema="schema"
+            :validation-schema="typedSchema"
           >
             <Field v-slot="{ field, errorMessage }" name="firstname">
               <div class="field">
@@ -268,7 +258,7 @@ const deleteUser = async () => {
             </Field>
           </Form>
           <template #footer>
-            <Button @click="hideUserDialog" label="Cancel" icon="pi pi-times" class="p-button-text" />
+            <Button @click="userDialog = false" label="Cancel" icon="pi pi-times" class="p-button-text" />
             <Button label="Save" type="submit" form="saveUserForm" icon="pi pi-check" />
           </template>
         </Dialog>

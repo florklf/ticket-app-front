@@ -9,5 +9,6 @@ export default defineI18nConfig(() => ({
   messages: {
     fr,
     en
-  }
+  },
+  jsTsFormatResource: true
 }))

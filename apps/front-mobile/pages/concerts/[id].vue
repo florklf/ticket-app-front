@@ -184,7 +184,7 @@
 
 <script setup lang="ts">
 import { useToast } from 'primevue/usetoast'
-import { Event } from '~/types/Events/Event'
+import { Event } from 'ts-interfaces'
 import { PATH as constantPath } from '@/constants/pages'
 useHead({ titleTemplate: '%s » Concerts' })
 

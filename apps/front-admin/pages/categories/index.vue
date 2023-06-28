@@ -3,7 +3,7 @@ import { FilterMatchMode, FilterOperator } from 'primevue/api'
 import { ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { EnumEventType, Genre } from 'ts-interfaces'
-import { Type } from 'ts-interfaces/types/Events/Type'
+import * as zod from 'zod'
 
 const { data: genres, refresh } = await useCustomFetch<Genre[]>('/genres')
 
@@ -12,38 +12,45 @@ const loading = ref(false)
 const genre: Ref<Partial<Genre>> = ref({})
 const genreDialog = ref(false)
 const deleteGenreDialog = ref(false)
-const submitted = ref(false)
 const filters = ref()
 const eventTypes = ref(Object.values(EnumEventType))
+
+const schema = zod.object({
+  name: zod.string({ required_error: 'Ce champ est requis' }).min(3, { message: 'Le nom doit contenir au moins 3 caractères' }),
+  type: zod.nativeEnum(EnumEventType, { required_error: 'Ce champ est requis' })
+})
+const typedSchema = ref(toTypedSchema(schema))
 
 const initFilters = () => {
   filters.value = {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
+    name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    'type.name': { value: null, matchMode: FilterMatchMode.IN }
   }
 }
 
 initFilters()
 
-const clearFilter1 = () => {
+const clearFilter = () => {
   initFilters()
 }
 
 const openNew = () => {
   genre.value = {
     name: '',
-    type: {
-      name: EnumEventType.CONCERT
-    } as Type
-  }
+    type: EnumEventType.CONCERT
+  } as any
   console.info(genre.value)
-  submitted.value = false
   genreDialog.value = true
+  typedSchema.value = toTypedSchema(schema)
 }
 
 const editGenre = (editedGenre: Genre) => {
   genre.value = { ...editedGenre }
-  console.info(genre.value)
+  genre.value.type = editedGenre.type.name as any
+  if (genre.value?.id) {
+    typedSchema.value = toTypedSchema(schema.partial())
+  }
   genreDialog.value = true
 }
 
@@ -52,55 +59,49 @@ const confirmDeleteGenre = (editedGenre: Genre) => {
   deleteGenreDialog.value = true
 }
 
-const hideGenreDialog = () => {
-  genreDialog.value = false
-  submitted.value = false
-}
-
 const saveGenre = async () => {
-  submitted.value = true
-  if (genre.value.name && genre.value.name.trim()) {
-    if (genre.value.id) {
-      await useCustomFetch<Event>(`/genres/${genre.value.id}`, {
-        method: 'PATCH',
-        body: {
-          name: genre.value.name,
-          type: {
-            connect: {
-              name: genre.value.type?.name
-            }
+  if (genre.value.id) {
+    await useCustomFetch<Event>(`/genres/${genre.value.id}`, {
+      method: 'PATCH',
+      body: {
+        name: genre.value.name,
+        type: {
+          connect: {
+            name: genre.value.type
           }
-        },
-        key: 'genre'
-      })
-      toast.add({
-        severity: 'success',
-        summary: 'Succès',
-        detail: 'Evenement modifié',
-        life: 3000
-      })
-    } else {
-      await useCustomFetch<Event>('/genres', {
-        method: 'POST',
-        body: JSON.stringify({
-          name: genre.value.name,
-          type: {
-            connect: genre.value.type
+        }
+      },
+      key: 'genre'
+    })
+    toast.add({
+      severity: 'success',
+      summary: 'Succès',
+      detail: 'Evenement modifié',
+      life: 3000
+    })
+  } else {
+    await useCustomFetch<Event>('/genres', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: genre.value.name,
+        type: {
+          connect: {
+            name: genre.value.type
           }
-        }),
-        key: 'genre'
-      })
-      toast.add({
-        severity: 'success',
-        summary: 'Succès',
-        detail: 'Evenement créé',
-        life: 3000
-      })
-    }
-    refresh()
-    genreDialog.value = false
-    genre.value = {}
+        }
+      }),
+      key: 'genre'
+    })
+    toast.add({
+      severity: 'success',
+      summary: 'Succès',
+      detail: 'Evenement créé',
+      life: 3000
+    })
   }
+  refresh()
+  genreDialog.value = false
+  genre.value = {}
 }
 
 const deleteGenre = async () => {
@@ -157,7 +158,7 @@ const deleteGenre = async () => {
                 Gestion des catégories
               </h5>
               <div class="flex gap-4">
-                <Button @click="clearFilter1()" type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined mb-2" />
+                <Button @click="clearFilter()" type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined mb-2" />
                 <span class="block mt-2 md:mt-0 p-input-icon-left">
                   <i class="pi pi-search" />
                   <InputText v-model="filters['global'].value" genreholder="Search..." />
@@ -206,23 +207,36 @@ const deleteGenre = async () => {
         </DataTable>
 
         <Dialog v-model:visible="genreDialog" :style="{ width: '450px' }" header="Détails de la catégorie" :modal="true" class="p-fluid">
-          <div class="field">
-            <label for="name">Nom</label>
-            <InputText id="name" v-model.trim="genre.name" required="true" autofocus :class="{ 'p-invalid': submitted && !genre.name }" />
-            <small v-if="submitted && !genre.name" class="p-invalid">Le nom est requis.</small>
-          </div>
-          <div class="field">
-            <label class="mb-3">Type d'évènement</label>
-            <div class="formgrid grid">
-              <div v-for="(type, index) in eventTypes" :key="index" class="field-radiobutton col-6">
-                <RadioButton v-model="(genre as Genre).type.name" :input-id="type" name="type" :value="type" />
-                <label :for="type">{{ type }}</label>
+          <Form
+            id="saveGenreForm"
+            @submit="saveGenre"
+            :initial-values="genre"
+            :validation-schema="typedSchema"
+          >
+            <Field v-slot="{ field, errorMessage }" name="name">
+              <div class="field">
+                <label for="name">Nom</label>
+                <InputText id="name" v-bind="field" v-model.trim="genre.name" :class="{ 'p-invalid': errorMessage }" />
+                <small id="name-help" class="p-error">{{ errorMessage }}</small>
               </div>
-            </div>
-          </div>
+            </Field>
+            <Field v-slot="{ field, errorMessage, }" name="type">
+              <div class="field">
+                <label for="type">Type d'évènement</label>
+                <div v-for="(type, index) in eventTypes" :key="index" class="field-radiobutton col-6">
+                  <RadioButton v-bind="field" v-model="(genre as Genre).type" :input-id="type" name="type" :value="type" />
+                  <label :for="type">{{ type }}</label>
+                </div>
+                <small id="name-help" class="p-error">{{ errorMessage }}</small>
+              </div>
+            </Field>
+          </Form>
           <template #footer>
-            <Button @click="hideGenreDialog" label="Cancel" icon="pi pi-times" class="p-button-text" />
-            <Button @click="saveGenre" label="Save" icon="pi pi-check" class="p-button-text" />
+            <Button @click="genreDialog = false" label="Cancel" icon="pi pi-times" class="p-button-text" />
+            <Button
+              label="Save" icon="pi pi-check" class="p-button-text" form="saveGenreForm"
+              type="submit"
+            />
           </template>
         </Dialog>
 

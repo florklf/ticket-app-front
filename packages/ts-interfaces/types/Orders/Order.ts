@@ -1,7 +1,7 @@
 import { EnumEventType } from '../EnumEventType'
 import { User } from '../User';
 import { OrderItem } from './OrderItem';
-import { Payment } from './Paiement';
+import { Payment } from './Payment';
 
 export interface Order {
     id: number;
@@ -20,5 +20,5 @@ export interface Order {
     created_at: string;
     updated_at: string;
     orderItems: OrderItem[];
-    paiement: Payment;
+    payment: Payment;
 }

@@ -30,7 +30,8 @@ export default defineNuxtConfig({
   },
   dayjs: {
     locales: ['fr'],
-    defaultLocale: 'fr'
+    defaultLocale: 'fr',
+    plugins: ['weekOfYear', 'advancedFormat', 'advancedFormat', 'isoWeek', 'localeData']
   },
   css: ['primeicons/primeicons.css', 'primeflex/primeflex.scss', 'primevue/resources/primevue.min.css', '@/assets/styles.scss'],
   auth: {

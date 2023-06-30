@@ -157,7 +157,6 @@ const saveEvent = async () => {
       })
     } else {
       const { type, ...eventWithoutType } = event.value
-      console.info(event.value, eventWithoutType, type)
       const { data: createdEvent } = await useCustomFetch<Event>('/events', {
         method: 'POST',
         body: JSON.stringify({
@@ -195,9 +194,6 @@ const saveEvent = async () => {
 
 const saveEventSeatType = async () => {
   submitted.value = true
-  console.info(eventSeatType.value)
-  console.info(selectedSeatType.value)
-  console.info(event.value)
   if (eventSeatType.value.price && eventSeatType.value.price > 0) {
     if (eventSeatType.value.id) {
       await useCustomFetch<EventSeatType>(`/events/seat-types/${eventSeatType.value.id}`, {
@@ -283,7 +279,6 @@ const confirmDeleteEventSeatType = (editEventSeatType: EventSeatType) => {
 
 const deleteEvent = async () => {
   const { error } = await useCustomFetch<Event>(`/events/${event.value.id}`, { method: 'DELETE', key: 'deleteEvent' })
-  console.info(error)
   if (!error.value) {
     events.value = events.value?.filter(val => val.id !== event.value.id) ?? null
     deleteEventDialog.value = false
@@ -306,7 +301,6 @@ const deleteEvent = async () => {
 
 const deleteEventSeatType = async () => {
   const { error } = await useCustomFetch<Event>(`/events/seat-types/${eventSeatType.value.id}`, { method: 'DELETE', key: 'deleteEventSeatType' })
-  console.info(error)
   if (!error.value) {
     events.value = events.value?.filter(val => val.id !== eventSeatType.value.id) ?? null
     deleteEventSeatTypeDialog.value = false
@@ -326,10 +320,6 @@ const deleteEventSeatType = async () => {
     })
   }
   refresh()
-}
-
-const confirmDeleteSelected = () => {
-  deleteEventsDialog.value = true
 }
 
 const deleteSelectedEvents = () => {
@@ -354,7 +344,6 @@ const onFileChange = (e: any) => {
       imageFieldLabel.textContent = 'Choisir une image'
     }
   }
-  console.info(e)
 }
 </script>
 
@@ -368,10 +357,6 @@ const onFileChange = (e: any) => {
             <div class="my-2">
               <Button @click="openNew" label="New" icon="pi pi-plus" class="p-button-success mr-2" />
             </div>
-          </template>
-
-          <template #end>
-            <Button @click="confirmDeleteSelected" label="Delete" icon="pi pi-trash" class="p-button-danger" :disabled="!selectedEvents || !selectedEvents.length" />
           </template>
         </Toolbar>
         <DataTable

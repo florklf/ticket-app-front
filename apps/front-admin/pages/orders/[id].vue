@@ -4,7 +4,6 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const { data: order } = await useCustomFetch<Order>(`/orders/${route.params.id}?include=true`)
-console.info(order.value)
 const layout = ref<'grid' | 'list' | undefined>('list')
 const dayjs = useDayjs()
 const seeInvoice = () => {
@@ -12,9 +11,9 @@ const seeInvoice = () => {
 }
 
 const getSeverity = (orderItem: OrderItem) => {
-  if (orderItem.seatType.available_seats < 1) {
+  if (orderItem.seatType.available_seats < (25 * orderItem.seatType.seatType.capacity) / 100) {
     return 'danger'
-  } else if (orderItem.seatType.available_seats < orderItem.seatType.seatType.capacity / 20) {
+  } else if (orderItem.seatType.available_seats < (50 * orderItem.seatType.seatType.capacity) / 100) {
     return 'warning'
   } else {
     return 'success'
@@ -122,7 +121,10 @@ const getSeverity = (orderItem: OrderItem) => {
                     <span class="text-2xl font-semibold">
                       {{ new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(slotProps.data.seatType.price) }}
                     </span>
-                    <Tag :value="slotProps.data.seatType.available_seats" :severity="getSeverity(slotProps.data)" />
+                    <div class="flex gap-2">
+                      <span class="text-500">Places restantes:</span>
+                      <Tag :value="slotProps.data.seatType.available_seats" :severity="getSeverity(slotProps.data)" />
+                    </div>
                   </div>
                 </div>
               </div>

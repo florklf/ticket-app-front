@@ -1,7 +1,10 @@
 export default {
   navbar: {
     home: 'Home',
-    concert: 'Concerts',
+    concerts: 'Concerts',
+    spectacles: 'Spectacles',
+    festivals: 'Festivals',
+    conferences: 'Conferences',
     signin: 'I sign in',
     signout: 'I sign out',
     dashboard: 'Dashboard',

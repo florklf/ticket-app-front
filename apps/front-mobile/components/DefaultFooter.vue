@@ -27,8 +27,20 @@ const navigation = {
       to: constantPath.HOME_PAGE
     },
     {
-      name: 'navbar.concert',
+      name: 'navbar.concerts',
       to: constantPath.CONCERTS_PAGE
+    },
+    {
+      name: 'navbar.spectacles',
+      to: constantPath.SPECTACLES_PAGE
+    },
+    {
+      name: 'navbar.festivals',
+      to: constantPath.FESTIVALS_PAGE
+    },
+    {
+      name: 'navbar.conferences',
+      to: constantPath.CONFERENCES_PAGE
     }
   ]
 }

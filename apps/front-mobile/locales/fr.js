@@ -1,7 +1,7 @@
 export default {
   navbar: {
     home: 'Accueil',
-    concert: 'Concerts',
+    concerts: 'Concerts',
     spectacles: 'Spectacles',
     festivals: 'Festivals',
     conferences: 'Conférences',

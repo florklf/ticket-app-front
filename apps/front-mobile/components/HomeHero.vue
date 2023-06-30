@@ -86,7 +86,6 @@ const search = async (event: any) => {
       page: 0
     })
   })
-  console.info(data.value)
   foundEventsIds.value = data.value
   const eventsBody = computed(() => {
     const body = {
@@ -105,7 +104,7 @@ const search = async (event: any) => {
 const onItemSelect = (event: any) => {
   query.value = event.value
   router.push({
-    path: `/${pluralize(event.value.type.toLowerCase())}/${event.value.id}`
+    path: `/${pluralize(event.value.type.name.toLowerCase())}/${event.value.id}`
   })
 }
 

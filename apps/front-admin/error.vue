@@ -8,7 +8,6 @@ definePageMeta({
 const props = defineProps(['error'])
 
 const message = computed(() => {
-  console.info(props.error)
   if (props.error.statusCode === 404) {
     return 'La page que vous recherchez n\'existe pas.'
   }

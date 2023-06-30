@@ -14,7 +14,7 @@
         <div class="flex flex-col gap-2 tracking-tight bg-primary text-textonprimary sm:text-4xl inline-block px-14 py-10 w-full md:w-auto md:absolute md:rounded-tr-3xl md:bottom-[-3.5em]">
           <div v-if="festival" class="flex flex-wrap gap-2">
             <Chip
-              v-for="eventGenre in festival.eventGenres" :key="eventGenre.id" :pt="{
+              v-for="eventGenre in festival.eventGenres" :key="(eventGenre.id as number)" :pt="{
                 root: { class: 'bg-gradient-to-r from-white to-gray-200' }
               }"
             >
@@ -198,7 +198,7 @@ const { data: festival } = await useCustomFetch<Event>(`/events/${route.params.i
 const i18n = useI18n({ useScope: 'global' })
 
 const items = ref([
-  { label: i18n.t('festival.title'), to: constantPath.FESTIVALS_PAGE },
+  { label: i18n.t('navbar.festivals'), to: constantPath.FESTIVALS_PAGE },
   { label: festival.value?.name }
 ])
 const showCategoryPopup = ref(false)

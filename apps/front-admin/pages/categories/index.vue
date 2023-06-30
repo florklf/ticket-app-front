@@ -40,7 +40,6 @@ const openNew = () => {
     name: '',
     type: EnumEventType.CONCERT
   } as any
-  console.info(genre.value)
   genreDialog.value = true
   typedSchema.value = toTypedSchema(schema)
 }

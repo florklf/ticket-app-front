@@ -137,5 +137,14 @@ export default {
     profile: {
       title: 'Profil'
     }
+  },
+  pwa: {
+    install: 'Installer',
+    installMessage: 'Cette application peut être installée sur votre appareil. Voulez-vous l\'installer ?',
+    cancel: 'Annuler',
+    close: 'Fermer',
+    update: 'Mettre à jour',
+    offlineReady: 'Application prête à fonctionner hors ligne',
+    newContent: 'Nouveau contenu disponible, cliquez sur le bouton de rechargement pour mettre à jour.'
   }
 }

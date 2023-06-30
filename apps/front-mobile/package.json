@@ -10,7 +10,8 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint --max-warnings 0 .",
     "typecheck": "nuxt typecheck",
-    "start": "NODE_ENV=production node .output/server/index.mjs"
+    "start": "NODE_ENV=production node .output/server/index.mjs",
+    "generate-pwa-assets": "pwa-assets-generator --preset minimal public/logo.svg"
   },
   "devDependencies": {
     "@nuxt/devtools": "^0.5.5",
@@ -20,6 +21,8 @@
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@types/node": "^18.16.8",
     "@types/pluralize": "^0.0.29",
+    "@vite-pwa/assets-generator": "^0.0.3",
+    "@vite-pwa/nuxt": "^0.1.0",
     "dayjs-nuxt": "^1.1.0",
     "eslint": "^8.41.0",
     "nuxt": "^3.5.0",

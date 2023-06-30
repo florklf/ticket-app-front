@@ -2,7 +2,7 @@
   <NuxtLink :to="`/${pluralize(event.type.name.toLowerCase())}/${event.id}`" class="flex flex-col flex-1">
     <div class="bg-gray-200 group-hover:opacity-90 sm:h-64 relative">
       <Chip
-        :label="event.type.name" class="absolute top-2 right-2 z-10" :pt="{
+        :label="event.type.name" class="absolute top-2 right-2 z-0" :pt="{
           root: { class: 'bg-gradient-to-r from-primarylight to-primary' }
         }"
       >

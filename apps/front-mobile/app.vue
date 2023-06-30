@@ -1,8 +1,11 @@
 <template>
-  <NuxtLayout>
-    <NuxtLoadingIndicator :height="5" color="#7254f3" />
-    <NuxtPage :key="$route.fullPath" />
-  </NuxtLayout>
+  <div>
+    <VitePwaManifest />
+    <NuxtLayout>
+      <NuxtLoadingIndicator :height="5" color="#7254f3" />
+      <NuxtPage :key="$route.fullPath" />
+    </NuxtLayout>
+  </div>
 </template>
 <script setup>
 import { defineRule } from 'vee-validate'

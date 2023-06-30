@@ -3,6 +3,7 @@ import { FilterMatchMode, FilterOperator } from 'primevue/api'
 import { ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { Place, SeatType } from 'ts-interfaces'
+import * as zod from 'zod'
 
 const { data: places, refresh } = await useCustomFetch<Place[]>('/places')
 
@@ -23,9 +24,24 @@ const placeDialog = ref(false)
 const seatTypeDialog = ref(false)
 const deletePlaceDialog = ref(false)
 const deleteSeatTypeDialog = ref(false)
-const submitted = ref(false)
 const filters = ref()
 const expandedRows = ref([])
+
+const placeSchema = zod.object({
+  name: zod.string({ required_error: 'Ce champ est requis' }).min(3, { message: 'Le nom doit contenir au moins 3 caractères' }),
+  description: zod.string({ required_error: 'Ce champ est requis' }).min(3, { message: 'La description doit contenir au moins 3 caractères' }),
+  address: zod.string({ required_error: 'Ce champ est requis' }),
+  zip: zod.string({ required_error: 'Ce champ est requis' }),
+  city: zod.string({ required_error: 'Ce champ est requis' })
+})
+const placeTypedSchema = ref(toTypedSchema(placeSchema))
+
+const seatTypeSchema = zod.object({
+  name: zod.string({ required_error: 'Ce champ est requis' }).min(3, { message: 'Le nom doit contenir au moins 3 caractères' }),
+  description: zod.string({ required_error: 'Ce champ est requis' }).min(3, { message: 'La description doit contenir au moins 3 caractères' }),
+  capacity: zod.number({ required_error: 'Ce champ est requis', invalid_type_error: 'Ce champ doit être un nombre' }).min(1, { message: 'La capacité doit être supérieure à 0' })
+})
+const seatTypeTypedSchema = ref(toTypedSchema(seatTypeSchema))
 
 const initFilters = () => {
   filters.value = {
@@ -38,26 +54,28 @@ const initFilters = () => {
 
 initFilters()
 
-const clearFilter1 = () => {
+const clearFilter = () => {
   initFilters()
 }
 
 const openNew = () => {
   place.value = {}
-  submitted.value = false
   placeDialog.value = true
+  placeTypedSchema.value = toTypedSchema(placeSchema)
 }
 
 const openNewSeatType = (parentPlace: Place) => {
   place.value = parentPlace
   seatType.value = {}
-  submitted.value = false
   seatTypeDialog.value = true
 }
 
 const editPlace = (editedPlace: Place) => {
   place.value = { ...editedPlace }
   placeDialog.value = true
+  if (place.value?.id) {
+    placeTypedSchema.value = toTypedSchema(placeSchema.partial())
+  }
 }
 
 const editSeatType = (editedSeatType: SeatType) => {
@@ -76,60 +94,46 @@ const confirmDeleteSeatType = (editedSeatType: SeatType) => {
   deleteSeatTypeDialog.value = true
 }
 
-const hidePlaceDialog = () => {
-  placeDialog.value = false
-  submitted.value = false
-}
-
-const hideSeatTypeDialog = () => {
-  seatTypeDialog.value = false
-  submitted.value = false
-}
-
 const savePlace = async () => {
-  submitted.value = true
-  if (place.value.name && place.value.name.trim()) {
-    if (place.value.id) {
-      await useCustomFetch<Event>(`/places/${place.value.id}`, {
-        method: 'PATCH',
-        body: {
-          name: place.value.name,
-          description: place.value.description,
-          address: place.value.address,
-          zip: place.value.zip,
-          city: place.value.city
-        },
-        key: 'place'
-      })
-      toast.add({
-        severity: 'success',
-        summary: 'Succès',
-        detail: 'Evenement modifié',
-        life: 3000
-      })
-    } else {
-      await useCustomFetch<Event>('/places', {
-        method: 'POST',
-        body: JSON.stringify({
-          ...place.value
-        }),
-        key: 'place'
-      })
-      toast.add({
-        severity: 'success',
-        summary: 'Succès',
-        detail: 'Evenement créé',
-        life: 3000
-      })
-    }
-    refresh()
-    placeDialog.value = false
-    place.value = {}
+  if (place.value.id) {
+    await useCustomFetch<Event>(`/places/${place.value.id}`, {
+      method: 'PATCH',
+      body: {
+        name: place.value.name,
+        description: place.value.description,
+        address: place.value.address,
+        zip: place.value.zip,
+        city: place.value.city
+      },
+      key: 'place'
+    })
+    toast.add({
+      severity: 'success',
+      summary: 'Succès',
+      detail: 'Evenement modifié',
+      life: 3000
+    })
+  } else {
+    await useCustomFetch<Event>('/places', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...place.value
+      }),
+      key: 'place'
+    })
+    toast.add({
+      severity: 'success',
+      summary: 'Succès',
+      detail: 'Evenement créé',
+      life: 3000
+    })
   }
+  refresh()
+  placeDialog.value = false
+  place.value = {}
 }
 
 const saveSeatType = async () => {
-  submitted.value = true
   if (seatType.value.name && seatType.value.name.trim()) {
     if (seatType.value.id) {
       await useCustomFetch<Event>(`/seat-types/${seatType.value.id}`, {
@@ -250,7 +254,7 @@ const deleteSeatType = async () => {
                 Gestion des lieux
               </h5>
               <div class="flex gap-4">
-                <Button @click="clearFilter1()" type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined mb-2" />
+                <Button @click="clearFilter()" type="button" icon="pi pi-filter-slash" label="Clear" class="p-button-outlined mb-2" />
                 <span class="block mt-2 md:mt-0 p-input-icon-left">
                   <i class="pi pi-search" />
                   <InputText v-model="filters['global'].value" placeholder="Search..." />
@@ -334,56 +338,89 @@ const deleteSeatType = async () => {
         </DataTable>
 
         <Dialog v-model:visible="placeDialog" :style="{ width: '450px' }" header="Détails du lieu" :modal="true" class="p-fluid">
-          <div class="field">
-            <label for="name">Nom</label>
-            <InputText id="name" v-model.trim="place.name" required="true" autofocus :class="{ 'p-invalid': submitted && !place.name }" />
-            <small v-if="submitted && !place.name" class="p-invalid">Le nom est requis.</small>
-          </div>
-          <div class="field">
-            <label for="description">Description</label>
-            <Textarea id="description" v-model="place.description" required="true" rows="3" cols="20" />
-          </div>
-          <div class="formgrid grid">
-            <div class="field col-12">
-              <label class="mb-3">Adresse</label>
-              <InputText id="name" v-model.trim="place.address" required="true" autofocus :class="{ 'p-invalid': submitted && !place.address }" />
+          <Form
+            id="savePlaceForm"
+            @submit="savePlace"
+            :initial-values="place"
+            :validation-schema="placeTypedSchema"
+          >
+            <Field v-slot="{ field, errorMessage }" name="name">
+              <div class="field">
+                <label for="name">Nom</label>
+                <InputText id="name" v-bind="field" v-model.trim="place.name" :class="{ 'p-invalid': errorMessage }" />
+                <small id="name-help" class="p-error">{{ errorMessage }}</small>
+              </div>
+            </Field>
+            <Field v-slot="{ field, errorMessage }" name="description">
+              <div class="field">
+                <label for="description">Description</label>
+                <Textarea id="description" v-bind="field" v-model.trim="place.description" :class="{ 'p-invalid': errorMessage }" />
+                <small id="description-help" class="p-error">{{ errorMessage }}</small>
+              </div>
+            </Field>
+            <Field v-slot="{ field, errorMessage }" name="address">
+              <div class="field">
+                <label for="address">Addresse</label>
+                <InputText id="address" v-bind="field" v-model="place.address" :class="{ 'p-invalid': errorMessage }" />
+                <small id="address-help" class="p-error">{{ errorMessage }}</small>
+              </div>
+            </Field>
+            <div class="formgrid grid">
+              <Field v-slot="{ field, errorMessage }" name="city">
+                <div class="field col">
+                  <label for="city">Ville</label>
+                  <InputText id="city" v-bind="field" v-model="place.city" :class="{ 'p-invalid': errorMessage }" />
+                  <small id="city-help" class="p-error">{{ errorMessage }}</small>
+                </div>
+              </Field>
+              <Field v-slot="{ field, errorMessage }" name="zip">
+                <div class="field col">
+                  <label for="zip">Code postal</label>
+                  <InputText id="zip" v-bind="field" v-model="place.zip" :class="{ 'p-invalid': errorMessage }" />
+                  <small id="zip-help" class="p-error">{{ errorMessage }}</small>
+                </div>
+              </Field>
             </div>
-            <div class="field col">
-              <label class="mb-3">Ville</label>
-              <InputText id="name" v-model.trim="place.city" required="true" autofocus :class="{ 'p-invalid': submitted && !place.city }" />
-            </div>
-            <div class="field col">
-              <label class="mb-3">Code postal</label>
-              <InputMask
-                id="name" v-model.trim="place.zip" required="true" autofocus :class="{ 'p-invalid': submitted && !place.zip }"
-                mask="99999" placeholder=""
-              />
-            </div>
-          </div>
+          </Form>
           <span v-if="place.id" class="mt-3">Capacité maximale: <span class="font-bold">{{ place.seatTypes?.reduce((total, seatType) => total + seatType.capacity, 0) }}</span></span>
           <template #footer>
-            <Button @click="hidePlaceDialog" label="Cancel" icon="pi pi-times" class="p-button-text" />
-            <Button @click="savePlace" label="Save" icon="pi pi-check" class="p-button-text" />
+            <Button @click="placeDialog = false" label="Cancel" icon="pi pi-times" class="p-button-text" />
+            <Button label="Save" type="submit" form="savePlaceForm" icon="pi pi-check" />
           </template>
         </Dialog>
 
         <Dialog v-model:visible="seatTypeDialog" :style="{ width: '450px' }" header="Détails du type de place" :modal="true" class="p-fluid">
-          <div class="field">
-            <label for="name">Nom</label>
-            <InputText id="name" v-model.trim="seatType.name" required="true" autofocus :class="{ 'p-invalid': submitted && !seatType.name }" />
-            <small v-if="submitted && !seatType.name" class="p-invalid">Le nom est requis.</small>
-          </div>
-          <div class="field">
-            <label for="description">Description</label>
-            <Textarea id="description" v-model="seatType.description" required="true" rows="3" cols="20" />
-          </div>
-          <div class="field">
-            <label class="mb-3">Capacité maximale</label>
-            <InputNumber v-model="seatType.capacity" :min="1" />
-          </div>
+          <Form
+            id="saveSeatTypeForm"
+            @submit="saveSeatType"
+            :initial-values="seatType"
+            :validation-schema="seatTypeTypedSchema"
+          >
+            <Field v-slot="{ field, errorMessage }" name="name">
+              <div class="field">
+                <label for="name">Nom</label>
+                <InputText id="name" v-bind="field" v-model.trim="seatType.name" :class="{ 'p-invalid': errorMessage }" />
+                <small id="name-help" class="p-error">{{ errorMessage }}</small>
+              </div>
+            </Field>
+            <Field v-slot="{ field, errorMessage }" name="description">
+              <div class="field">
+                <label for="description">Description</label>
+                <Textarea id="description" v-bind="field" v-model.trim="seatType.description" :class="{ 'p-invalid': errorMessage }" />
+                <small id="description-help" class="p-error">{{ errorMessage }}</small>
+              </div>
+            </Field>
+            <Field v-slot="{ errorMessage, handleChange, value }" v-model="seatType.capacity" name="capacity">
+              <div class="field">
+                <label for="capacity">Capacité maximale</label>
+                <InputNumber id="capacity" @update:model-value="handleChange" :model-value="value" :class="{ 'p-invalid': errorMessage }" />
+                <small id="capacity-help" class="p-error">{{ errorMessage }}</small>
+              </div>
+            </Field>
+          </Form>
           <template #footer>
-            <Button @click="hideSeatTypeDialog" label="Cancel" icon="pi pi-times" class="p-button-text" />
-            <Button @click="saveSeatType" label="Save" icon="pi pi-check" class="p-button-text" />
+            <Button @click="seatTypeDialog = false" label="Cancel" icon="pi pi-times" class="p-button-text" />
+            <Button label="Save" type="submit" form="saveSeatTypeForm" icon="pi pi-check" />
           </template>
         </Dialog>
 
@@ -401,7 +438,7 @@ const deleteSeatType = async () => {
         <Dialog v-model:visible="deleteSeatTypeDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
           <div class="flex align-items-center justify-content-center">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-            <span v-if="seatType">Êtes-vous sûr de vous supprimer <b>{{ seatType.name }}</b>?</span>
+            <span v-if="seatType">Êtes-vous sûr de vouloir supprimer <b>{{ seatType.name }}</b>?</span>
           </div>
           <template #footer>
             <Button @click="deleteSeatTypeDialog = false" label="No" icon="pi pi-times" class="p-button-text" />

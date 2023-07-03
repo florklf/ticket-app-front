@@ -135,7 +135,8 @@ export default {
       }
     },
     profile: {
-      title: 'Profil'
+      title: 'Profil',
+      orderCount: 'Vous avez acheté {count} billet|Vous avez acheté {count} billets'
     }
   },
   pwa: {

@@ -114,7 +114,8 @@ export default {
       }
     },
     profile: {
-      title: 'Profile'
+      title: 'Profile',
+      orderCount: 'You have ordered {count} ticket|You have ordered {count} tickets'
     }
   },
   pwa: {

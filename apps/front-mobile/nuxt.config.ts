@@ -24,6 +24,7 @@ export default defineNuxtConfig({
       name: 'Ticket App',
       short_name: 'TicketApp',
       theme_color: '#ffffff',
+      background_color: '#ffffff',
       icons: [
         {
           src: 'pwa-192x192.png',

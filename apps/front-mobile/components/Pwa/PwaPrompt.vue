@@ -19,9 +19,9 @@
           </div>
           <div class="flex gap-2">
             <Button v-if="slotProps.message.detail === 'install'" @click="$pwa.install()" severity="primary" :label="$t('pwa.install')" size="small" />
-            <Button v-if="slotProps.message.detail === 'install'" @click="$pwa.cancelInstall()" severity="secondary" :label="$t('pwa.cancel')" size="small" />
+            <Button v-if="slotProps.message.detail === 'install'" @click="$pwa.cancelInstall(); toast.removeGroup('pwa')" severity="secondary" :label="$t('pwa.cancel')" size="small" />
             <Button v-if="slotProps.message.detail === 'newContent'" @click="$pwa?.updateServiceWorker()" severity="primary" :label="$t('pwa.update')" size="small" />
-            <Button v-if="slotProps.message.detail === 'newContent' || slotProps.message.detail === 'offlineReady'" @click="$pwa?.cancelPrompt()" severity="secondary" :label="$t('pwa.close')" size="small" />
+            <Button v-if="slotProps.message.detail === 'newContent' || slotProps.message.detail === 'offlineReady'" @click="$pwa?.cancelPrompt(); toast.removeGroup('pwa')" severity="secondary" :label="$t('pwa.close')" size="small" />
           </div>
         </div>
       </template>

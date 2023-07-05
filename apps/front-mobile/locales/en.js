@@ -1,6 +1,7 @@
 export default {
   navbar: {
     home: 'Home',
+    map: 'Carte',
     concerts: 'Concerts',
     spectacles: 'Spectacles',
     festivals: 'Festivals',
@@ -126,5 +127,13 @@ export default {
     update: 'Update',
     offlineReady: ' App ready to work offline',
     newContent: 'New content available, click on reload button to update'
+  },
+  map: {
+    title: 'Events map',
+    filters: {
+      period: 'Period',
+      types: 'Event types',
+      reset: 'Reset filters'
+    }
   }
 }

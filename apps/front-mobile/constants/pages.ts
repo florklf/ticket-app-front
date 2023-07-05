@@ -1,5 +1,6 @@
 const ENUM_PAGE = {
   HOME_PAGE: 'HOME_PAGE',
+  MAP_PAGE: 'MAP_PAGE',
   CONCERTS_PAGE: 'CONCERTS_PAGE',
   SPECTACLES_PAGE: 'SPECTACLES_PAGE',
   FESTIVALS_PAGE: 'FESTIVALS_PAGE',
@@ -14,6 +15,7 @@ const ENUM_PAGE = {
 
 export const PATH = {
   [ENUM_PAGE.HOME_PAGE]: '/',
+  [ENUM_PAGE.MAP_PAGE]: '/map',
   [ENUM_PAGE.CONCERTS_PAGE]: '/concerts',
   [ENUM_PAGE.SPECTACLES_PAGE]: '/spectacles',
   [ENUM_PAGE.FESTIVALS_PAGE]: '/festivals',
@@ -27,6 +29,7 @@ export const PATH = {
 
 export const TITLE = {
   [ENUM_PAGE.HOME_PAGE]: null,
+  [ENUM_PAGE.MAP_PAGE]: 'Carte',
   [ENUM_PAGE.CONCERTS_PAGE]: 'Concerts',
   [ENUM_PAGE.SPECTACLES_PAGE]: 'Spectacles',
   [ENUM_PAGE.FESTIVALS_PAGE]: 'Festivals',

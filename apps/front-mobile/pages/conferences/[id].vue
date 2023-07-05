@@ -243,7 +243,6 @@ const addToCart = async () => {
       })
     }
   } catch (error) {
-    console.error(error)
   }
 }
 </script>

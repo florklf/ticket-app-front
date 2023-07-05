@@ -26,11 +26,37 @@ const deletePlaceDialog = ref(false)
 const deleteSeatTypeDialog = ref(false)
 const filters = ref()
 const expandedRows = ref([])
+const addressSearch = ref('')
+const addressSearchItems = ref([])
+const addressSearchQueryResults = ref()
+const selectedAddress = ref()
+const disabledForm = ref(false)
+
+const search = async () => {
+  addressSearchQueryResults.value = await $fetch('https://api-adresse.data.gouv.fr/search', {
+    query: {
+      q: addressSearch.value,
+      limit: 5
+    }
+  })
+  addressSearchItems.value = addressSearchQueryResults?.value.features.map((feature: any) => feature.properties.label) ?? []
+}
+
+const selectSuggestion = (originalEvent: { originalEvent: Event, value: string}) => {
+  selectedAddress.value = addressSearchQueryResults?.value.features.find((feature: any) => feature.properties.label === originalEvent.value)
+  addressSearch.value = selectedAddress.value.properties.name
+  place.value.address = selectedAddress.value.properties.name
+  place.value.city = selectedAddress.value.properties.city
+  place.value.zip = selectedAddress.value.properties.citycode
+  place.value.lat = selectedAddress.value.geometry.coordinates[1]
+  place.value.lng = selectedAddress.value.geometry.coordinates[0]
+  disabledForm.value = false
+}
 
 const placeSchema = zod.object({
   name: zod.string({ required_error: 'Ce champ est requis' }).min(3, { message: 'Le nom doit contenir au moins 3 caractères' }),
   description: zod.string({ required_error: 'Ce champ est requis' }).min(3, { message: 'La description doit contenir au moins 3 caractères' }),
-  address: zod.string({ required_error: 'Ce champ est requis' }),
+  address: zod.string({ required_error: 'Ce champ est requis' }).min(4, { message: 'L\'adresse doit contenir au moins 4 caractères' }),
   zip: zod.string({ required_error: 'Ce champ est requis' }),
   city: zod.string({ required_error: 'Ce champ est requis' })
 })
@@ -72,6 +98,7 @@ const openNewSeatType = (parentPlace: Place) => {
 
 const editPlace = (editedPlace: Place) => {
   place.value = { ...editedPlace }
+  addressSearch.value = editedPlace.address
   placeDialog.value = true
   if (place.value?.id) {
     placeTypedSchema.value = toTypedSchema(placeSchema.partial())
@@ -103,7 +130,9 @@ const savePlace = async () => {
         description: place.value.description,
         address: place.value.address,
         zip: place.value.zip,
-        city: place.value.city
+        city: place.value.city,
+        lat: place.value.lat,
+        lng: place.value.lng
       },
       key: 'place'
     })
@@ -116,9 +145,9 @@ const savePlace = async () => {
   } else {
     await useCustomFetch<Event>('/places', {
       method: 'POST',
-      body: JSON.stringify({
+      body: {
         ...place.value
-      }),
+      },
       key: 'place'
     })
     toast.add({
@@ -361,22 +390,28 @@ const deleteSeatType = async () => {
             <Field v-slot="{ field, errorMessage }" name="address">
               <div class="field">
                 <label for="address">Addresse</label>
-                <InputText id="address" v-bind="field" v-model="place.address" :class="{ 'p-invalid': errorMessage }" />
+                <AutoComplete
+                  v-model="addressSearch"
+                  @change="disabledForm = true"
+                  @complete="search" @item-select="(originalEvent: any) => selectSuggestion(originalEvent)" :class="{ 'p-invalid': errorMessage }" :suggestions="addressSearchItems" :delay="500"
+                  :min-length="4"
+                />
                 <small id="address-help" class="p-error">{{ errorMessage }}</small>
+                <input v-bind="field" v-model="place.address" type="hidden">
               </div>
             </Field>
             <div class="formgrid grid">
               <Field v-slot="{ field, errorMessage }" name="city">
                 <div class="field col">
                   <label for="city">Ville</label>
-                  <InputText id="city" v-bind="field" v-model="place.city" :class="{ 'p-invalid': errorMessage }" />
+                  <InputText id="city" v-bind="field" v-model="place.city" readonly :class="{ 'p-invalid': errorMessage }" />
                   <small id="city-help" class="p-error">{{ errorMessage }}</small>
                 </div>
               </Field>
               <Field v-slot="{ field, errorMessage }" name="zip">
                 <div class="field col">
                   <label for="zip">Code postal</label>
-                  <InputText id="zip" v-bind="field" v-model="place.zip" :class="{ 'p-invalid': errorMessage }" />
+                  <InputText id="zip" v-bind="field" v-model="place.zip" readonly :class="{ 'p-invalid': errorMessage }" />
                   <small id="zip-help" class="p-error">{{ errorMessage }}</small>
                 </div>
               </Field>
@@ -385,7 +420,7 @@ const deleteSeatType = async () => {
           <span v-if="place.id" class="mt-3">Capacité maximale: <span class="font-bold">{{ place.seatTypes?.reduce((total, seatType) => total + seatType.capacity, 0) }}</span></span>
           <template #footer>
             <Button @click="placeDialog = false" label="Cancel" icon="pi pi-times" class="p-button-text" />
-            <Button label="Save" type="submit" form="savePlaceForm" icon="pi pi-check" />
+            <Button :disabled="disabledForm" label="Save" type="submit" form="savePlaceForm" icon="pi pi-check" />
           </template>
         </Dialog>
 

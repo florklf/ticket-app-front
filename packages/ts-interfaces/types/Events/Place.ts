@@ -6,6 +6,8 @@ export interface Place {
     description: string;
     capacity: number;
     address: string;
+    lat: number;
+    lng: number;
     city: string;
     zip: string;
     seatTypes: SeatType[];

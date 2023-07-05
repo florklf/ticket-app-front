@@ -1,6 +1,7 @@
 export default {
   navbar: {
     home: 'Accueil',
+    map: 'Carte',
     concerts: 'Concerts',
     spectacles: 'Spectacles',
     festivals: 'Festivals',
@@ -146,5 +147,13 @@ export default {
     update: 'Mettre à jour',
     offlineReady: 'Application prête à fonctionner hors ligne',
     newContent: 'Nouveau contenu disponible, cliquez sur le bouton de rechargement pour mettre à jour.'
+  },
+  map: {
+    title: 'Carte des évènements',
+    filters: {
+      period: 'Période',
+      types: 'Types d\'évènements',
+      reset: 'Réinitialiser les filtres'
+    }
   }
 }

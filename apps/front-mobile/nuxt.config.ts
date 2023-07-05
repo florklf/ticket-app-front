@@ -17,9 +17,14 @@ export default defineNuxtConfig({
     'nuxt-lodash',
     '@sfxcode/nuxt-primevue',
     '@nuxtjs/i18n',
-    '@vite-pwa/nuxt'
+    '@vite-pwa/nuxt',
+    'nuxt-mapbox'
   ],
+  mapbox: {
+    accessToken: 'pk.eyJ1IjoiemVkbGlrZSIsImEiOiJjbGpuNDV3czQweGMzM2xyN2s1Y3JlNnJ0In0.wPMaPeA9AVBsDennj2p6fQ'
+  },
   pwa: {
+    registerType: 'autoUpdate',
     manifest: {
       name: 'Ticket App',
       short_name: 'TicketApp',
@@ -47,7 +52,8 @@ export default defineNuxtConfig({
     workbox: {
       navigateFallback: null,
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
-      globIgnores: ['snipcart-custom.html']
+      globIgnores: ['snipcart-custom.html'],
+      maximumFileSizeToCacheInBytes: 10000000
     },
     client: {
       installPrompt: true
@@ -75,7 +81,6 @@ export default defineNuxtConfig({
       ]
     }
   },
-
   auth: {
     baseURL: process.env.NODE_ENV === 'production' ? 'https://tickets.rklf.fr/api/auth' : process.env.NUXT_PUBLIC_API_BASE + '/auth',
     provider: {
@@ -120,7 +125,7 @@ export default defineNuxtConfig({
   dayjs: {
     locales: ['fr'],
     defaultLocale: 'fr',
-    plugins: ['relativeTime', 'utc', 'timezone'],
+    plugins: ['relativeTime', 'utc', 'timezone', 'isBetween'],
     defaultTimezone: 'Europe/Paris'
   },
 

@@ -10,7 +10,8 @@ export default defineNuxtConfig({
     ],
     'dayjs-nuxt',
     '@nuxtjs/i18n',
-    '@nuxt/devtools'
+    '@nuxt/devtools',
+    'nuxt-mapbox'
   ],
   app: {
     head: {
@@ -24,6 +25,9 @@ export default defineNuxtConfig({
         }
       ]
     }
+  },
+  mapbox: {
+    accessToken: 'pk.eyJ1IjoiemVkbGlrZSIsImEiOiJjbGpuNDV3czQweGMzM2xyN2s1Y3JlNnJ0In0.wPMaPeA9AVBsDennj2p6fQ'
   },
   build: {
     transpile: ['primevue']

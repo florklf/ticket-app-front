@@ -9,7 +9,7 @@
         <div class="w-16 h-16 rounded-full bg-gray-200 bg-cover bg-center" style="background-image: url('https://picsum.photos/200')" />
         <div class="flex flex-col flex-1">
           <h2 class="text-lg font-bold">
-            {{ userData?.firstname }} {{ userData.lastname }}
+            {{ userData?.firstname }} {{ userData?.lastname }}
           </h2>
           <p class="text-sm text-gray-500">
             {{ userData?.email }}
@@ -24,8 +24,11 @@
           <h3 class="text-lg font-bold">
             {{ $t('dashboard.order.title') }}
           </h3>
-          <p class="text-sm text-gray-500">
-            {{ $t('dashboard.profile.orderCount', { count: userData.Order.length }) }}
+          <p v-if="userData?.Order.length" class="text-sm text-gray-500">
+            {{ $t('dashboard.profile.orderCount', { count: userData?.Order.length }) }}
+          </p>
+          <p v-else>
+            {{ $t('dashboard.order.orderList.empty') }}
           </p>
         </div>
       </div>

@@ -18,8 +18,7 @@
     "husky": "^8.0.3",
     "prettier": "^2.8.8",
     "turbo": "^1.10.1",
-    "@sidebase/nuxt-auth": "^0.6.0-beta.2",
-    "@nuxtjs/i18n": "8.0.0-beta.12"
+    "@sidebase/nuxt-auth": "^0.6.0-beta.2"
   },
   "packageManager": "pnpm@8.6.0",
   "name": "turborepo-pnpm"

@@ -37,6 +37,7 @@
 </template>
 
 <script setup lang="ts">
+import { EnumRole } from 'ts-interfaces'
 import * as zod from 'zod'
 definePageMeta({
   layout: 'guest',
@@ -46,7 +47,7 @@ definePageMeta({
   }
 })
 
-const { signIn } = useAuth()
+const { signIn, signOut, data } = useAuth()
 const loading = ref(false)
 
 const validationSchema = toTypedSchema(
@@ -66,7 +67,13 @@ const onSubmit = handleSubmit(async (values) => {
   loading.value = true
   try {
     await signIn(values, { redirect: false })
-    return navigateTo('/')
+    if (data.value) {
+      if (data.value.user.role as EnumRole === EnumRole.ADMIN) {
+        return navigateTo('/')
+      } else {
+        await signOut()
+      }
+    }
   } catch (error) {
     errorMessage.value = 'Une erreur est survenue lors de la connexion. Veuillez vérifier les informations saisies.'
   }

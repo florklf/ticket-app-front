@@ -345,6 +345,20 @@ const onFileChange = (e: any) => {
     }
   }
 }
+const eventStatusLabel = (eventStatus: EnumEventStatus) => {
+  switch (eventStatus) {
+    case EnumEventStatus.AVAILABLE:
+      return 'Disponible'
+    case EnumEventStatus.SOLD_OUT:
+      return 'Complet'
+    case EnumEventStatus.PAST:
+      return 'Passé'
+    case EnumEventStatus.UNAVAILABLE:
+      return 'Indisponible'
+    default:
+      return 'Indéfini'
+  }
+}
 </script>
 
 <template>
@@ -355,7 +369,7 @@ const onFileChange = (e: any) => {
         <Toolbar class="mb-4">
           <template #start>
             <div class="my-2">
-              <Button @click="openNew" label="New" icon="pi pi-plus" class="p-button-success mr-2" />
+              <Button @click="openNew" label="Nouveau" icon="pi pi-plus" class="p-button-success mr-2" />
             </div>
           </template>
         </Toolbar>
@@ -461,7 +475,7 @@ const onFileChange = (e: any) => {
             style="min-width: 14rem"
           >
             <template #body="{ data }">
-              <Tag :value="$t(`event.status.${data.status}`)" :severity="getSeverity(data.status)" />
+              <Tag :value="eventStatusLabel(data.status)" :severity="getSeverity(data.status)" />
             </template>
             <template #filter="{ filterModel, filterCallback }">
               <div class="mb-3 text-bold">
@@ -470,7 +484,7 @@ const onFileChange = (e: any) => {
               <MultiSelect v-model="filterModel.value" @change="filterCallback" :options="eventStatuses" placeholder="Any" class="p-column-filter">
                 <template #option="slotProps">
                   <div class="p-multiselect-representative-option">
-                    <span>{{ $t(`event.status.${slotProps.option}`) }}</span>
+                    <span>{{ eventStatusLabel(slotProps.option) }}</span>
                   </div>
                 </template>
               </MultiSelect>

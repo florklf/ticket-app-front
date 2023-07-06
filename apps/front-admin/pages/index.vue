@@ -44,12 +44,40 @@ const totalTicketsSoldEvolution = computed(() => {
   const previousTicketsSold = previousOrders.value?.reduce((total: number, order: Order) => total + (order.orderItems.reduce((orderTotal: number, item: OrderItem) => orderTotal + item.quantity, 0)), 0) ?? 0
   return totalTicketsSold.value - previousTicketsSold
 })
+const infoCardBodyLabel = computed(() => {
+  switch (selectedTimeScope.value) {
+    case EnumTimeScope.DAY:
+      return ' par rapport à hier'
+    case EnumTimeScope.WEEK:
+      return ' par rapport à la semaine dernière'
+    case EnumTimeScope.MONTH:
+      return ' par rapport au mois dernier'
+    case EnumTimeScope.YEAR:
+      return ' par rapport à l\'année dernière'
+    case EnumTimeScope.ALL:
+      return ' par rapport au mois dernier'
+  }
+})
+const timeScopeLabel = (timeScope: EnumTimeScope) => {
+  switch (timeScope) {
+    case EnumTimeScope.DAY:
+      return 'Aujourd\'hui'
+    case EnumTimeScope.WEEK:
+      return 'Cette semaine'
+    case EnumTimeScope.MONTH:
+      return 'Ce mois-ci'
+    case EnumTimeScope.YEAR:
+      return 'Cette année'
+    case EnumTimeScope.ALL:
+      return 'Tout'
+  }
+}
 </script>
 
 <template>
   <div>
     <Dropdown
-      v-model="selectedTimeScope" option-label="label" option-value="value" :options="timeScopes.map(timeScope => { return { label: $t(`timeScope.${timeScope}`), value: timeScope} })" placeholder="Sélectionner une période"
+      v-model="selectedTimeScope" option-label="label" option-value="value" :options="timeScopes.map(timeScope => { return { label: timeScopeLabel(timeScope), value: timeScope} })" placeholder="Sélectionner une période"
       class="w-full md:w-14rem mb-4"
     />
     <div class="grid">
@@ -57,7 +85,7 @@ const totalTicketsSoldEvolution = computed(() => {
         <InfoCard v-if="orders" title="Commandes" :body="scopedOrders?.length">
           <template v-if="selectedTimeScope !== EnumTimeScope.ALL" #footer>
             <span class="text-green-500 font-medium" :class="{'text-red-500' : totalOrdersEvolution < 0}">{{ totalOrdersEvolution > 0 ? `+${totalOrdersEvolution}` : `${totalOrdersEvolution}` }}</span>
-            <span class="text-500"> {{ $t(`index.infoCard.body.${selectedTimeScope}`) }}</span>
+            <span class="text-500"> {{ infoCardBodyLabel }}</span>
           </template>
         </InfoCard>
       </div>
@@ -68,7 +96,7 @@ const totalTicketsSoldEvolution = computed(() => {
         >
           <template v-if="selectedTimeScope !== EnumTimeScope.ALL" #footer>
             <span class="text-green-500 font-medium" :class="{'text-red-500' : totalRevenueEvolution < 0}">{{ totalRevenueEvolution > 0 ? `+${totalRevenueEvolution}` : `${totalRevenueEvolution}` }}</span>
-            <span class="text-500"> {{ $t(`index.infoCard.body.${selectedTimeScope}`) }}</span>
+            <span class="text-500"> {{ infoCardBodyLabel }}</span>
           </template>
         </InfoCard>
       </div>
@@ -76,7 +104,7 @@ const totalTicketsSoldEvolution = computed(() => {
         <InfoCard title="Clients" :body="totalClients" icon="pi pi-inbox" icon-color="cyan">
           <template v-if="selectedTimeScope !== EnumTimeScope.ALL" #footer>
             <span class="text-green-500 font-medium" :class="{'text-red-500' : totalClientsEvolution < 0}">{{ totalClientsEvolution > 0 ? `+${totalClientsEvolution}` : `${totalClientsEvolution}` }}</span>
-            <span class="text-500"> {{ $t(`index.infoCard.body.${selectedTimeScope}`) }}</span>
+            <span class="text-500"> {{ infoCardBodyLabel }}</span>
           </template>
         </InfoCard>
       </div>
@@ -84,13 +112,13 @@ const totalTicketsSoldEvolution = computed(() => {
         <InfoCard title="Places vendues" :body="totalTicketsSold" icon="pi pi-inbox" icon-color="cyan">
           <template v-if="selectedTimeScope !== EnumTimeScope.ALL" #footer>
             <span class="text-green-500 font-medium" :class="{'text-red-500' : totalTicketsSoldEvolution < 0}">{{ totalTicketsSoldEvolution > 0 ? `+${totalTicketsSoldEvolution}` : `${totalTicketsSoldEvolution}` }}</span>
-            <span class="text-500"> {{ $t(`index.infoCard.body.${selectedTimeScope}`) }}</span>
+            <span class="text-500"> {{ infoCardBodyLabel }}</span>
           </template>
         </InfoCard>
       </div>
       <div class="col-12 xl:col-6">
         <div class="card">
-          <h5>{{ $t(`index.orderTable.header.${selectedTimeScope}`) }}</h5>
+          <h5>Commandes sur la période</h5>
           <OrderTable :orders="scopedOrders" :expanded="false" :rows="5" :only="['date','name','payment.amount','actions']" />
         </div>
       </div>

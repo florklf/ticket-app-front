@@ -63,7 +63,7 @@ const getSeverity = (orderItem: OrderItem) => {
                 <div v-if="order.payment" class="flex flex-column sm:items-end sm:justify-end">
                   <div class="flex flex-column sm:flex-row sm:align-items-center">
                     <span class="font-semibold">Méthode de paiement:</span>
-                    <span class="ml-2">{{ $t(`payment.method.${order.payment.payment_method}`) }}</span>
+                    <span class="ml-2">{{ order.payment.payment_method === 'CreditCard' ? 'Carte bancaire' : order.payment.payment_method }}</span>
                   </div>
                   <div class="flex flex-column sm:flex-row sm:align-items-center">
                     <span class="font-semibold">Statut:</span>

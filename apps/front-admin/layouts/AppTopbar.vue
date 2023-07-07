@@ -1,11 +1,9 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { useRouter } from 'vue-router'
 import { useLayout } from './composables/layout'
 const { onMenuToggle } = useLayout()
 const outsideClickListener = ref(null)
 const topbarMenuActive = ref(false)
-const router = useRouter()
 const { signOut } = useAuth()
 
 onMounted(() => {
@@ -52,9 +50,8 @@ const isOutsideClicked = (event) => {
   return !(sidebarEl.isSameNode(event.target) || sidebarEl.contains(event.target) || topbarEl.isSameNode(event.target) || topbarEl.contains(event.target))
 }
 
-const handleSignOut = () => {
-  signOut()
-  router.push('/signin')
+const handleSignOut = async () => {
+  await signOut({ callbackUrl: '/signin' })
 }
 </script>
 

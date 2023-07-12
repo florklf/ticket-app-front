@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    service: front-desktop
+  name: front-desktop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: front-desktop
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        network/ticket-app-front-default: "true"
+        service: front-desktop
+    spec:
+      containers:
+        - image: front-desktop
+          name: front-desktop
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          resources: {}
+      restartPolicy: Always
+status: {}

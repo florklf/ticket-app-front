@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    service: front-mobile
+  name: front-mobile
+spec:
+  type: LoadBalancer
+  ports:
+    - name: "3001"
+      port: 3001
+      targetPort: 3000
+  selector:
+    service: front-mobile
+status:
+  loadBalancer: {}

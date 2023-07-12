@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    service: front-mobile
+  name: front-mobile
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: front-mobile
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: front-mobile
+    spec:
+      containers:
+        - image: front-mobile
+          name: front-mobile
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          resources: {}
+          env:
+            - name: NUXT_PUBLIC_API_BASE
+              value: http://gateway.default.svc.cluster.local
+            - name: SNIPCART_API_KEY
+              value: YjRjYzVmMzMtNDllMC00Y2Y1LTlhYTktMjQyNTYxYzAyNDA4NjM4MjA1MjE3Nzc4NDI3OTc2
+      restartPolicy: Always
+status: {}

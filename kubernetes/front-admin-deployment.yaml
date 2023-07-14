@@ -33,7 +33,7 @@ spec:
             - name: NUXT_PUBLIC_API_BASE
               valueFrom:
                 secretKeyRef:
-                  name: ticketapp-front
+                  name: ticketapp
                   key: NUXT_PUBLIC_API_BASE
       restartPolicy: Always
 status: {}

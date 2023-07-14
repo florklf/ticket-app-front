@@ -31,12 +31,17 @@ spec:
             - name: NUXT_PUBLIC_API_BASE
               valueFrom:
                 secretKeyRef:
-                  name: ticketapp-front
+                  name: ticketapp
                   key: NUXT_PUBLIC_API_BASE
             - name: GOOGLE_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: ticketapp-front
+                  name: ticketapp
                   key: GOOGLE_API_KEY
+            - name: GOOGLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ticketapp
+                  key: SNIPCART_API_KEY
       restartPolicy: Always
 status: {}

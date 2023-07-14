@@ -6,6 +6,7 @@ metadata:
     service: front-admin
   name: front-admin
 spec:
+  type: LoadBalancer
   ports:
     - name: "4002"
       port: 4002

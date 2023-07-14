@@ -3,40 +3,37 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    service: front-mobile
-  name: front-mobile
+    service: front-admin
+  name: front-admin
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: front-mobile
+      service: front-admin
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        network/ticket-app-default: "true"
-        service: front-mobile
+        network/ticket-app-front-default: "true"
+        service: front-admin
     spec:
       containers:
-        - image: foopy7774/front-mobile:latest
-          name: front-mobile
+        - image: foopy7774/front-admin:latest
+          name: front-admin
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 4001
+            - containerPort: 4002
           resources: {}
           env:
             - name: PORT
-              value: "4001"
+              value: "4002"
+            - name: NUXT_APP_BASE_URL
+              value: /admin/
             - name: NUXT_PUBLIC_API_BASE
               valueFrom:
                 secretKeyRef:
                   name: ticketapp-front
                   key: NUXT_PUBLIC_API_BASE
-            - name: GOOGLE_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: ticketapp-front
-                  key: GOOGLE_API_KEY
       restartPolicy: Always
 status: {}

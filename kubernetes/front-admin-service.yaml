@@ -6,12 +6,11 @@ metadata:
     service: front-admin
   name: front-admin
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
     - name: "4002"
       port: 4002
       targetPort: 4002
   selector:
     service: front-admin
-status:
-  loadBalancer: {}
+status: {}

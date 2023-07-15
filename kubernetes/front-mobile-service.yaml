@@ -6,12 +6,11 @@ metadata:
     service: front-mobile
   name: front-mobile
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
     - name: "4001"
       port: 4001
       targetPort: 4001
   selector:
     service: front-mobile
-status:
-  loadBalancer: {}
+status: {}

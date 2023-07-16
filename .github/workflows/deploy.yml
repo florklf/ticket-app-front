@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [ main, feat/kubernetes ]
+    branches: [ main ]
 
 name: 🚧 Build & Push to Docker Hub
 jobs:

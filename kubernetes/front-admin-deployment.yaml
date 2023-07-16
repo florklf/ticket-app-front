@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    service: front-admin
+  name: front-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: front-admin
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        network/ticket-app-front-default: "true"
+        service: front-admin
+    spec:
+      containers:
+        - image: foopy7774/front-admin:latest
+          name: front-admin
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4002
+          resources: {}
+          env:
+            - name: PORT
+              value: "4002"
+            - name: NUXT_APP_BASE_URL
+              value: /admin/
+            - name: NUXT_PUBLIC_API_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: ticketapp
+                  key: NUXT_PUBLIC_API_BASE
+      restartPolicy: Always
+status: {}

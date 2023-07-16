@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    service: front-mobile
+  name: front-mobile
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: front-mobile
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        network/ticket-app-default: "true"
+        service: front-mobile
+    spec:
+      containers:
+        - image: foopy7774/front-mobile:latest
+          name: front-mobile
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4001
+          resources: {}
+          env:
+            - name: PORT
+              value: "4001"
+            - name: NUXT_PUBLIC_API_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: ticketapp
+                  key: NUXT_PUBLIC_API_BASE
+            - name: NUXT_PUBLIC_GOOGLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ticketapp
+                  key: GOOGLE_API_KEY
+            - name: PUBLIC_SNIPCART_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ticketapp
+                  key: PUBLIC_SNIPCART_API_KEY
+      restartPolicy: Always
+status: {}

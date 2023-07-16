@@ -127,7 +127,7 @@ export default defineNuxtConfig({
   },
 
   snipcart: {
-    publicApiKey: process.env.SNIPCART_API_KEY ?? 'NjE1YWRlYmUtNDAxNS00NzhhLTlmYzUtNmE1MWQwYmFmZDYzNjM4MjEzMTY4OTU3MDI4Mzg2',
+    publicApiKey: process.env.PUBLIC_SNIPCART_API_KEY ?? 'YjRjYzVmMzMtNDllMC00Y2Y1LTlhYTktMjQyNTYxYzAyNDA4NjM4MjA1MjE3Nzc4NDI3OTc2',
     templatesUrl: '/snipcart-custom.html',
     currency: 'EUR',
     language: 'fr',

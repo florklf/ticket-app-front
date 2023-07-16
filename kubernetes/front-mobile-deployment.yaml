@@ -21,7 +21,7 @@ spec:
       containers:
         - image: foopy7774/front-mobile:latest
           name: front-mobile
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 4001
           resources: {}

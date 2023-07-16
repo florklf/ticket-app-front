@@ -21,7 +21,7 @@ spec:
       containers:
         - image: foopy7774/front-admin:latest
           name: front-admin
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 4002
           resources: {}
